@@ -1,0 +1,15 @@
+.inventory-grid {
+    grid-template-columns: auto 72px;
+
+    @screen sm {
+        grid-template-columns: 110px auto 72px;
+    }
+
+    @screen md {
+        grid-template-columns: 110px auto 72px 72px;
+    }
+
+    @screen lg {
+        grid-template-columns: 110px auto 72px 72px;
+    }
+}

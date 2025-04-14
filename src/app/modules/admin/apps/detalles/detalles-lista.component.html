@@ -1,0 +1,157 @@
+<div class="inset-0 min-w-0 text-center overflow-auto print:overflow-visible" cdkScrollable style="max-height: 100vh; overflow-y: auto; margin: 0; padding: 0;">
+
+    <!-- Main -->
+    <div class="inline-block p-6 sm:p-10 text-left print:p-0" style="margin: 0; padding: 0;">
+
+        <!-- Invoice -->
+        <div class="w-240 p-16 rounded-2xl shadow bg-card print:w-auto print:rounded-none print:shadow-none print:bg-transparent">
+
+            <div id="print-section">
+                <div class="flex justify-center">
+                    <img src="assets/images/logo/LOGO-MUNICIPALIDAD-SANJUAN-BAUTISTA-tipo-membrete.png" class="w-2/4 h-auto">
+                </div>
+                <br><br>
+                <div class="col-span-8 font-medium text-md text-secondary text-center">PRUEBAS DE IMPRESION PROFORMAS</div> <br>
+                Nombre y Apellido: {{ProformaModelCabecera.nombreApellido}} <br> <br>
+                R.U.C.: {{ProformaModelCabecera.ruc}} <br><br>
+
+                <!-- Divider 
+                <div class="col-span-12 my-4 border-b"></div>-->
+
+               <!--  <ng-container *ngIf="(detalle$ | async) as detalles">
+                    <ng-container *ngIf="detalles.length > 0; else noDetalles">
+                        <div class="grid">
+                            
+                            <div
+                            class="inventory-grid z-10 sticky top-0 grid grid-cols-5 gap-5 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5 items-center"
+                            matSort
+                            matSortDisableClear>
+    
+                                <div
+                                    class="hidden sm:block"
+                                    [mat-sort-header]="'id'">
+                                    Código
+                                </div>
+    
+                                <div
+                                    [mat-sort-header]="'conceptoDescripcion'">
+                                    Concepto
+                                </div>
+    
+                                <div
+                                    class="hidden md:block"
+                                    [mat-sort-header]="'costo'">
+                                    Costo
+                                </div>
+
+                                <div
+                                    class="hidden md:block"
+                                    [mat-sort-header]="'observacion'">
+                                    Observación
+                                </div>
+    
+                                <div class="hidden sm:block">Detalle</div>
+    
+                            </div>
+    
+                            
+                            <ng-container *ngIf="(detalle$ | async) as detalles">
+                                <ng-container *ngFor="let detalle of detalles; trackBy: trackByFn">
+                                    <div class="inventory-grid grid grid-cols-5 items-center gap-5 py-3 px-6 md:px-8 border-b">
+    
+                                      
+                                        <div class="hidden sm:block truncate">
+                                            {{detalle.id}}
+                                        </div>
+    
+                                       
+                                        <div class="truncate">
+                                            {{detalle.conceptoDescripcion}}
+                                        </div>
+    
+                                        <div class="truncate">
+                                            {{detalle.costo}}
+                                        </div>
+
+                                        <div class="truncate">
+                                            {{detalle.observacion}}
+                                        </div>
+
+                                        
+                                    </div>      
+                                </ng-container>
+                            </ng-container>
+                        </div>
+
+                       
+                        <div class="col-span-2 font-medium text-md text-secondary">EXENTA: {{ProformaModelCabecera.exenta}} | IVA 5: {{ProformaModelCabecera.iva5}} |  IVA 10: {{ProformaModelCabecera.iva10}} | DESCUENTO: {{ProformaModelCabecera.montoDescuento}} </div>
+                        <div class="col-span-8 self-center text-2xl font-medium tracking-tight text-secondary">TOTAL:     {{ProformaModelCabecera.total}} </div>
+                    </ng-container>
+                </ng-container>-->
+
+                <!--fin contenedor de prueba-->
+                <ng-container *ngIf="(detallesArray$ | async) as detalles">
+                    <ng-container *ngIf="detalles.length > 0; else noDetalles">
+                        <div class="grid">
+                            <ng-container *ngFor="let detalle of detalles; trackBy: trackByFn; let i = index">
+                                <div class="border rounded-lg p-4 bg-white shadow-md dark:bg-gray-800">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h3 class="text-lg font-semibold">Detalle {{ detalle.id }}</h3>
+                                        <div class="flex space-x-2">
+                                            <div class="flex items-center w-32 h-10 px-4 border border-gray-200 rounded dark:border-gray-700 bg-orange-200">
+                                                <input [mat-dialog-close]="detalle" [id]="'checkbox-' + i" type="checkbox" (change)="onCheckboxChange($event, detalle.id, detalle.costo)" class="w-8 h-8 cursor-pointer">
+                                                <label [for]="'checkbox-' + i" class="w-full py-4 ms-2 text-base font-medium text-gray-900 dark:text-gray-300">Anular</label>
+                                            </div>
+                
+                                            <button [mat-dialog-close]="detalle"
+                                                class="w-32 h-10 px-4 leading-6 bg-blue-500 text-white rounded shadow-md hover:bg-blue-600"
+                                                mat-stroked-button 
+                                                >Imprimir
+                                            </button>
+                                        </div>
+                                    </div>
+                
+                                    <table class="w-full border-collapse table-fixed">
+                                        <thead>
+                                            <tr>
+                                                <th class="w-1/6 border-b text-center border-r py-2 px-4">Código</th>
+                                                <th class="w-1/3 border-b text-left border-r py-2 px-4">Concepto</th>
+                                                <th class="w-1/6 border-b text-center border-r py-2 px-4">Costo</th>
+                                                <th class="w-1/3 border-b text-left border-r py-2 px-4">Observación</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="w-1/3 border-b text-center border-r py-2 px-4">{{ detalle.id }}</td>
+                                                <td class="w-1/6 border-b text-left border-r py-2 px-4">{{ detalle.conceptoDescripcion }}</td>
+                                                <td class="w-1/3 border-b text-center border-r py-2 px-4">{{ detalle.costo }}</td>
+                                                <td class="w-1/6 border-b text-left border-r py-2 px-4">{{ detalle.observacion }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </ng-container>
+                
+                
+                <ng-template #noProformas>
+                    <div>No hay proformas disponibles.</div>
+                </ng-template>
+                
+            </div>
+            <br>
+            <div class="col-span-2 font-medium text-md text-secondary">DESCUENTO: {{ProformaModelCabecera.montoDescuento}} </div>
+            <div class="flex items-center justify-between mb-4">
+                <div class="col-span-8 self-center text-2xl font-medium tracking-tight text-secondary">TOTAL: {{ ProformaModelCabecera.totalAPagar | number:'1.2-2' }}</div>
+                    <button 
+                        class="w-32 h-10 px-4 leading-6 bg-green-600 text-white rounded shadow-md hover:bg-green-600"
+                        mat-stroked-button 
+                        (click)="liquidarProforma()">Guardar
+                    </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,107 @@
+<div class="inset-0 min-w-0 text-center overflow-auto print:overflow-visible" cdkScrollable style="max-height: 100vh; overflow-y: auto; margin: 0; padding: 0;">
+
+    <!-- Main -->
+    <div class="inline-block p-6 sm:p-10 text-left print:p-0" style="margin: 0; padding: 0;">
+
+        <!-- Invoice -->
+        <div class="w-240 p-16 rounded-2xl shadow bg-card print:w-auto print:rounded-none print:shadow-none print:bg-transparent">
+
+            <div id="print-section">
+                <!-- Columns -->
+                <div class="col-span-8 font-medium text-md text-secondary">PRUEBAS DE IMPRESION PROFORMAS</div>
+                <div class="font-medium text-md text-right text-secondary">RATE</div>
+                <div class="font-medium text-md text-right text-secondary">QTY</div>
+                <div class="col-span-2 font-medium text-md text-right text-secondary">TOTAL</div>
+
+                <!-- Divider -->
+                <div class="col-span-12 my-4 border-b"></div>
+
+                <!-- Item -->
+                <div class="col-span-8 text-lg font-medium">Prototype & Design</div>
+                <div class="self-center text-right">$75.00</div>
+                <div class="self-center text-right">240</div>
+                <div class="col-span-2 self-center text-right">$18,000.00</div>
+
+                <!-- Subtotal -->
+                <div class="col-span-10 self-center font-medium tracking-tight text-secondary">SUBTOTAL</div>
+                <div class="col-span-2 text-right text-lg">$227,315.00</div>
+
+                <!-- Divider -->
+                <div class="col-span-12 my-3 border-b"></div>
+
+                <!-- Tax -->
+                <div class="col-span-10 self-center font-medium tracking-tight text-secondary">TAX</div>
+                <div class="col-span-2 text-right text-lg">$11,365.75</div>
+
+                <!-- Divider -->
+                <div class="col-span-12 my-3 border-b"></div>
+
+                <!-- Discount -->
+                <div class="col-span-10 self-center font-medium tracking-tight text-secondary">DISCOUNT</div>
+                <div class="col-span-2 text-right text-lg">$3,680.75</div>
+
+                <!-- Divider -->
+                <div class="col-span-12 my-3 border-b"></div>
+
+                <!-- Total -->
+                <div class="col-span-10 self-center text-2xl font-medium tracking-tight text-secondary">TOTAL</div>
+                <div class="col-span-2 text-right text-2xl font-medium">$235,000.00</div>
+
+                <ng-container *ngIf="proforma$ | async as proformas">
+                    <ng-container *ngIf="proformas.length > 0; else noProformas">
+                        <div class="grid">
+                            <!-- Header -->
+                            <div
+                                class="inventory-grid z-10 sticky top-0 grid gap-8 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                                matSort
+                                matSortDisableClear>
+                                <div class="hidden sm:block" [mat-sort-header]="'id'">
+                                    Código
+                                </div>
+                                <div [mat-sort-header]="'nombreApellido'">
+                                    Contribuyente
+                                </div>
+                                <div class="hidden md:block" [mat-sort-header]="'ruc'">
+                                    RUC
+                                </div>
+                                <div class="hidden sm:block">Seleccione</div>
+                            </div>
+                
+                            <!-- Rows -->
+                            <ng-container *ngFor="let proform of proforma; trackBy: trackByFn">
+                                <div>
+                                    <!-- Código -->
+                                    <div class="col-span-8 text-lg font-medium">{{proform.id}} - {{proform.nombreApellido}} - {{proform.ruc}}</div>
+                                    <div class="self-center text-right">$75.00</div>
+                                    <div class="self-center text-right">$75.00</div>
+                                    <div class="col-span-2 self-center text-right">$18,000.00</div>
+                                    <!-- print button -->
+                                    <div mat-dialog-actions>
+                                        <button [mat-dialog-close]="proforma"
+                                            class="min-w-10 min-h-7 h-7 px-2 leading-6"
+                                            mat-stroked-button 
+                                            >print
+                                        </button>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </ng-container>
+                
+                <ng-template #noProformas>
+                    <div>No hay proformas disponibles.</div>
+                </ng-template>
+                
+                
+            </div>
+            
+            <div class="mt-16">
+                <button mat-flat-button color="primary" (click)="print()">Imprimir</button>
+            </div>
+            
+        </div>
+
+    </div>
+    
+</div>

@@ -1,0 +1,211 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <!-- Header -->
+    <div
+        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">ABM Construcciones</div>
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+            <!-- Botón Agregar  -->
+            <button mat-flat-button [color]="'primary'" (click)="agregarConstruccion()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">Agregar Construccion</span>
+            </button>          
+            <button mat-icon-button (click)="closeDialog()" class="close-button absolute top-0 right-0 p-2 bg-transparent border-none text-red-500 hover:text-red-700" color="warn">
+                <mat-icon>close</mat-icon>
+            </button>  
+        </div>
+    </div>
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+        <!-- Lista de Dominios -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(construcciones$ | async) as construcciones">
+                <ng-container *ngIf="construcciones.length > 0; else noConstrucciones">
+                    <div class="grid">
+                        <!-- Header     -->
+                        <div class="inventory-grid z-10 sticky top-0 grid grid-cols-4 gap-8 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                            matSort matSortDisableClear>
+                            <div class="hidden sm:block" [mat-sort-header]="'nroFilaConstruccion'">
+                                Código
+                            </div>
+                            <div class="hidden sm:block" [mat-sort-header]="'ctaCte'">
+                                Cuenta Corriente
+                            </div>
+                            <div class="hidden sm:block" [mat-sort-header]="'obs'">
+                                Observación
+                            </div>
+                            <div class="hidden sm:block">Detalle</div>
+                        </div>
+                        <!-- Rows -->
+                        <ng-container *ngIf="(construcciones$ | async) as construcciones">
+                            <ng-container *ngFor="let construccion of construcciones; trackBy: trackByFn">
+                                <div
+                                    class="inventory-grid grid grid-cols-4 items-center gap-4 py-3 px-6 md:px-8 border-b">
+                                    <!-- Código -->
+                                    <div class="hidden sm:block truncate" aria-readonly="">
+                                        {{construccion.nroFilaConstruccion}}
+                                    </div>
+                                    <div class="hidden sm:block truncate" aria-readonly="">
+                                        {{construccion.ctaCte}}
+                                    </div>
+                                    <div class="hidden sm:block truncate" aria-readonly="">
+                                        {{construccion.obs}}
+                                    </div>
+                                    <!-- Details button -->
+                                    <div>
+                                        <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button
+                                            (click)="toggleDetails(construccion.nroFilaConstruccion)">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="selectedConstruccion?.nroFilaConstruccion === construccion.nroFilaConstruccion ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="grid">
+                                    <ng-container *ngIf="selectedConstruccion?.nroFilaConstruccion === construccion.nroFilaConstruccion">
+                                        <ng-container
+                                            *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: construccion}"></ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </ng-container>
+
+            <ng-template #rowDetailsTemplate let-construccion>
+                <div class="shadow-lg overflow-hidden">
+                    <div class="flex border-b">
+                        <!-- Selected registro form -->
+                        <form class="flex flex-col w-full" [formGroup]="selectedConstruccionForm">
+                            <div class="flex flex-col w-full p-8">
+                                <div class="flex flex-auto flex-wrap">
+                                    <div class="flex flex-col w-full lg:w-full sm:pl-8">
+                                        <div class="flex">
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>ID</mat-label>
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'nroFilaConstruccion'" style="font-weight: bold; text-align: center;" readonly>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Cta Cte</mat-label>
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'ctaCte'" style="font-weight: bold; text-align: center;" readonly>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/3 pr-2">
+                                                <mat-label>Área</mat-label>
+                                                <input placeholder="Área" matInput 
+                                                  [formControlName]="'area'"
+                                                  pattern="^\d+(\.\d{1,2})?$"
+                                                  title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" (blur)="markAsTouched(selectedConstruccionForm.get('area'))">
+                                                  <mat-error *ngIf="selectedConstruccionForm.get('area').hasError('required') && selectedConstruccionForm.get('area').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-1/6 pr-2">
+                                                <mat-label>Borrado</mat-label>
+                                                <input matInput [formControlName]="'borrado'" readonly>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/6 pr-2">
+                                                <mat-label>Año</mat-label>
+                                                <input matInput [formControlName]="'anioConstruccion'" readonly>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>Observación</mat-label>
+                                                <input matInput
+                                                    [formControlName]="'obs'" (blur)="markAsTouched(selectedConstruccionForm.get('obs'))"/>
+                                                    <mat-error *ngIf="selectedConstruccionForm.get('obs').hasError('required') && selectedConstruccionForm.get('obs').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>  
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Categoría Construcción</mat-label>
+                                                <mat-select [formControlName]="'categoriaConstruccion'" (blur)="markAsTouched(selectedConstruccionForm.get('categoriaConstruccion'))">
+                                                  <mat-error *ngIf="selectedConstruccionForm.get('categoriaConstruccion').hasError('required') && selectedConstruccionForm.get('categoriaConstruccion').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                                  <ng-container *ngFor="let dp of categoriaConstrucciones">
+                                                    <mat-option [value]="dp.id">
+                                                      {{ dp.descripcion }}
+                                                    </mat-option>
+                                                  </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Tipo Construcción</mat-label>
+                                                <mat-select [formControlName]="'tipoConstruccion'" (blur)="markAsTouched(selectedConstruccionForm.get('tipoConstruccion'))">
+                                                  <mat-error *ngIf="selectedConstruccionForm.get('tipoConstruccion').hasError('required') && selectedConstruccionForm.get('tipoConstruccion').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                                  <ng-container *ngFor="let dp of tipoConstrucciones">
+                                                    <mat-option [value]="dp.id">
+                                                      {{ dp.descripcion }}
+                                                    </mat-option>
+                                                  </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>  
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between w-full border-t px-8 py-4">
+                                <div class="flex items-center">
+                                    <div class="flex items-center mr-4" *ngIf="flashMessage">
+
+                                        <ng-container *ngIf="flashMessage === 'success'">
+                                            <mat-icon class="text-green-500"
+                                                [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                            <span class="ml-2">Registro Actualizado</span>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="flashMessage === 'error'">
+                                            <mat-icon class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">Se ha producido un error, inténtelo de nuevo.</span>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="flashMessage === 'validacion'">
+                                            <mat-icon
+                                                class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">Campos incompletos.</span>
+                                        </ng-container>
+                                    </div>
+
+                                    <button mat-flat-button (click)="updateSelectedConstruccion()" [color]="'primary'">
+                                        Actualizar
+                                    </button>
+                                    <button
+                                        mat-flat-button
+                                        type="button"
+                                        [color]="'red'">
+                                        Cancelar Registro 
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template #noConstrucciones>
+                <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">No hay Registros!
+                </div>
+            </ng-template>
+
+        </div>
+
+    </div>
+
+</div>

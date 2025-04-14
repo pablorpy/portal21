@@ -1,0 +1,154 @@
+<div class="mt-80 flex flex-col flex-auto min-w-0">
+    <!-- Title -->
+
+    <div class="flex-auto p-6 sm:p-2">
+
+        <div class="max-w-3xl">
+    <!-- Compose button -->
+    <!-- <form class="flex flex-col mt-4 px-8 pt-10 bg-card shadow rounded overflow-hidden">
+        <p class="text-lg font-medium">Basic information</p>
+        <p class="text-secondary mb-6">
+            Set your login preferences, help us personalize your experience and make big account changes here
+        </p>
+        <div class="flex">
+            <mat-form-field class="flex-auto">
+                <input
+                    matInput
+                    [placeholder]="'Email Address'">
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
+            </mat-form-field>
+        </div>
+    </form> -->
+
+            <!-- <mat-divider class="mt-6 mb-10"></mat-divider> -->
+    <!-- <form
+                    class="flex flex-col w-full"
+                    [formGroup]="filtroEstadoCuentaContribForm">
+                    
+                    <div class="flex items-center">
+                        <div class="flex items-center flex-auto">
+                            
+                            <mat-form-field class="fuse-mat-rounded fuse-mat-dense flex flex-col w-full lg:w-2/5 p-3">
+                                <mat-label>Tipo Documento </mat-label>
+                                <mat-select [formControlName]="'tipoDocumento'" [(value)]="defaultTipoDoc">
+                                    <ng-container *ngFor="let x of tiposDocumentos">
+                                        <mat-option [value]="x.id" >
+                                            {{x.descripcion}}
+                                        </mat-option>
+                                    </ng-container>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field
+                                class="fuse-mat-rounded fuse-mat-dense flex flex-col w-full lg:w-3/5 p-3"
+                                [subscriptSizing]="'dynamic'">
+                                <mat-icon
+                                    class="icon-size-5"
+                                    [svgIcon]="'heroicons_solid:magnifying-glass'"
+                                    matPrefix></mat-icon>
+                                <input
+                                    matInput
+                                    [autocomplete]="'off'"
+                                    [placeholder]="'Consulta por número de documento'"
+                                    (input)="filterByQuery(searchInput.value)"
+                                    #searchInput>
+                            </mat-form-field>
+                        </div>
+                        
+                        <button
+                            class="ml-4 px-1 sm:px-4 min-w-10"
+                            mat-flat-button
+                            [color]="'primary'"
+                            (click)="consultarEstadoCuenta(searchInput.value)">
+                            <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+                            <span class="hidden sm:inline-block ml-2">Consultar</span>
+                        </button>
+                    </div>
+                </form> -->
+                <!-- <form
+
+                [formGroup]="filtroEstadoCuentaContribForm">
+                <mat-form-field >
+                    <mat-label>Tipo Documento </mat-label>
+                    <mat-select [formControlName]="'tipoDocumento'" [(value)]="defaultTipoDoc">
+                        <ng-container *ngFor="let x of tiposDocumentos">
+                            <mat-option [value]="x.id" >
+                                {{x.descripcion}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field
+                    [subscriptSizing]="'dynamic'">
+                    <mat-icon
+                        class="icon-size-5"
+                        [svgIcon]="'heroicons_solid:magnifying-glass'"
+                        matPrefix></mat-icon>
+                    <input
+                        matInput
+                        [autocomplete]="'off'"
+                        [placeholder]="'Consulta por número de documento'"
+                        (input)="filterByQuery(searchInput.value)"
+                        #searchInput>
+                </mat-form-field>    -->
+                
+                 <!-- <form [formGroup]="filtroEstadoCuentaContribForm"
+                    class="flex flex-col mt-16 p-2 pb-8 bg-card rounded-2xl shadow overflow-hidden">
+                    <div class="flex flex-col gt-xs:flex-row">
+                        <mat-form-field class="flex-auto gt-xs:pr-3">
+                            <mat-label>Tipo Documento </mat-label>
+                            <mat-select [formControlName]="'tipoDocumento'" [(value)]="defaultTipoDoc">
+                                <ng-container *ngFor="let x of tiposDocumentos">
+                                    <mat-option *ngFor="let x of tiposDocumentos" [value]="x.id" >
+                                        {{x.descripcion}}
+                                    </mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                        
+                        
+                    </div>
+                 </form> -->
+            <!-- <div class="flex items-center">
+                
+                    <mat-label>Nro Documento </mat-label>
+                    <input matInput [formControlName]="'nroDocumento'"
+                    class="fuse-mat-dense fuse-mat-dense flex flex-col w-full lg:w-5/5 p-3"
+                    #searchInput> -->
+                        
+                   
+                
+                <!-- <mat-icon
+                        class="icon-size-5"
+                        [svgIcon]="'heroicons_solid:magnifying-glass'"
+                        matPrefix></mat-icon>
+                <input
+                matInput
+                [autocomplete]="'off'"
+                [placeholder]="'Nro. Documento'"
+                (input)="filterByQuery(searchInput.value)"
+                #searchInput> -->
+            <!-- </div>
+    <button
+        class="mx-6"
+        mat-flat-button
+        [color]="'primary'"
+        (click)="consultarEstadoCuenta(searchInput.value)">
+        <mat-icon
+            class="icon-size-5"
+            [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+        <span class="ml-2">Consultar</span>
+    </button>
+</form> -->
+        </div>
+    <!-- Navigation -->
+    <!-- <fuse-vertical-navigation
+        [navigation]="menuData"
+        [inner]="true"
+        [mode]="'side'"
+        [opened]="true"></fuse-vertical-navigation> -->
+</div>

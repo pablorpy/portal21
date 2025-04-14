@@ -1,0 +1,728 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+
+    <!-- Header -->
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+
+        <!-- Loader -->
+        <div
+            class="absolute inset-x-0 bottom-0"
+            *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">Catastros</div>
+
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+
+            <!-- Búsqueda -->
+            <!--mat-form-field
+                class="fuse-mat-dense fuse-mat-rounded min-w-64"
+                [subscriptSizing]="'dynamic'">
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+
+                <input
+                    matInput
+                    [formControl]="searchInputControl"
+                    [autocomplete]="'off'"
+                    [placeholder]="'Buscar Cuenta Corriente'">
+            </mat-form-field-->
+            <!-- Botón Agregar -->
+            <!--button mat-flat-button class="ml-4" [color]="'primary'" (click)="agregarCatastro()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">Agregar Catastro</span>
+            </button-->
+            <form 
+                    [formGroup]="filtroBusquedaContribForm">
+                    <!-- Header -->
+                  
+                        <mat-form-field class="fuse-mat-dense fuse-mat-rounded min-w-64">
+                            
+                          <mat-icon
+                          class="icon-size-5"
+                          [svgIcon]="'heroicons_solid:magnifying-glass'"
+                          matPrefix></mat-icon>
+                                <mat-label>Filtrar por </mat-label>
+                                <mat-select [formControlName]="'campoFiltro'" (valueChange)="limpiarFiltroValor($event)"
+                                            [(value)]="defaultFiltroBusq" >
+                                    <ng-container *ngFor="let x of filtrosBusqContrib" >
+                                        <mat-option [value]="x.codigo" >
+                                            {{x.descripcion}}
+                                        </mat-option>
+                                    </ng-container>
+                                </mat-select>
+                            </mat-form-field>
+                        
+                            <mat-form-field
+                                class="fuse-mat-dense fuse-mat-rounded min-w-64">
+                                <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'heroicons_solid:magnifying-glass'"
+                                matPrefix></mat-icon>
+                                <mat-label>Valor Busqueda</mat-label>
+                                <input #valorFiltroBusq
+                                    matInput
+                                    [autocomplete]="'off'"
+                                    [placeholder]="'Valor busqueda'"
+                                    [aria-describedby]=""
+                                    [formControlName]="'valorFiltro'"
+                                    >
+                            </mat-form-field>
+                            <!-- Consultar -->
+                        
+
+                        <!--button
+                            
+                            mat-flat-button
+                            [color]="'primary'"
+                            (click)="consultarEstadoCuenta()">
+                            <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+                            <span class="hidden sm:inline-block ml-2">Consultar</span>
+                        </button-->
+                        <!-- Botón Agregar -->
+                        <button mat-flat-button class="ml-4" [color]="'primary'" (click)="agregarCatastro()">
+                            <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                            <span class="ml-2 mr-1">Agregar Catastro</span>
+                        </button>
+                </form>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <!-- Lista de Dominios -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(catastros$ | async) as catastros">
+                <ng-container *ngIf="catastros.length > 0; else noCatastros">
+                    <div class="grid">
+                        <!-- Header     -->
+                        <div
+                            class="inventory-grid z-10 sticky top-0 grid grid-cols-5 gap-8 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                            matSort
+                            matSortDisableClear>
+
+                            <div
+                                class="hidden sm:block"
+                                [mat-sort-header]="'id'">
+                                ID
+                            </div>
+
+                            <div
+                                class="hidden sm:block"
+                                [mat-sort-header]="'ctaCte'">
+                                Cuenta Corriente
+                            </div>
+
+                            <div
+                                class="min-w-10 min-h-7 h-7 px-2 leading-2"
+                                [mat-sort-header]="'rmc'">
+                                RMC
+                            </div>
+
+                            <div
+                                class="hidden sm:block"
+                                [mat-sort-header]="'direccionCatastro'">
+                                Dirección
+                            </div>
+
+                            <div
+                                class="hidden sm:block"
+                                [mat-sort-header]="'observacion'">
+                                Observación
+                            </div>
+
+                            <div class="hidden sm:block">Detalle</div>
+
+                        </div>
+
+                        <!-- Rows -->
+                        <ng-container *ngIf="(catastros$ | async) as catastros">
+                            <ng-container *ngFor="let catastro of catastros; trackBy: trackByFn">
+                                <div class="inventory-grid grid grid-cols-5 items-center gap-4 py-3 px-6 md:px-8 border-b">
+
+                                    <!-- Código -->
+                                    <div class="hidden sm:block truncate" aria-readonly="">
+                                        {{catastro.id}}
+                                    </div>
+
+                                    <!-- {{registro.contribuyente.nombre}} {{registro.contribuyente.apellido}} -->
+                                    <div class="hidden sm:block truncate">
+                                        {{catastro.ctaCte}}
+                                    </div>
+
+                                    <div class="min-w-10 min-h-7 h-7 px-2 leading-2">
+                                      {{catastro.rmc}}
+                                  </div>
+
+                                    <!-- {{registro.categoria.descripcion}} -->
+                                    <div class="hidden sm:block truncate">
+                                        {{catastro.direccionCatastro}}
+                                    </div>
+
+                                    <div class="hidden sm:block truncate">
+                                        {{catastro.observacion}}
+                                    </div>
+
+                                    <!-- Details button -->
+                                    <div>
+                                        <button
+                                            class="min-w-10 min-h-7 h-7 px-2 leading-6"
+                                            mat-stroked-button
+                                            (click)="toggleDetails(catastro.id)">
+                                            <mat-icon
+                                                class="icon-size-5"
+                                                [svgIcon]="selectedCatastro?.id === catastro.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="grid">
+                                    <ng-container *ngIf="selectedCatastro?.id === catastro.id">
+                                        <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: catastro}"></ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator
+                        class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                        [ngClass]="{'pointer-events-none': isLoading}"
+                        [length]="pagination.length"
+                        [pageIndex]="pagination.page"
+                        [pageSize]="pagination.size"
+                        [pageSizeOptions]="[5, 10, 25, 100]"
+                        [showFirstLastButtons]="true">
+                    </mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <ng-template
+                #rowDetailsTemplate
+                let-catastro>
+                <div class="shadow-lg overflow-hidden">
+                    <div class="flex border-b">
+                        <!-- Selected registro form -->
+                        <form
+                            class="flex flex-col w-full"
+                            [formGroup]="selectedCatastroForm">
+
+                            <div class="flex flex-col w-full p-8">
+                                <div class="flex flex-auto flex-wrap">
+                                    <div class="flex flex-col w-full lg:full sm:pl-8">
+                                        <div class="flex">
+                                            <div class="w-3/4">
+                                              <mat-form-field class="w-1/7 pr-2">
+                                                  <mat-label>ID Catastro</mat-label>
+                                                  <input
+                                                      matInput
+                                                      [formControlName]="'id'" style="color: red; font-weight: bold;">
+                                              </mat-form-field>
+                                              <mat-form-field class="w-2/7 pr-2">
+                                                  <mat-label>rmc</mat-label>
+                                                  <input matInput
+                                                      [formControlName]="'rmc'" style="font-weight: bold;" (blur)="markAsTouched(selectedCatastroForm.get('rmc'))" readonly/>
+                                                      <mat-error *ngIf="selectedCatastroForm.get('rmc').hasError('required') && selectedCatastroForm.get('rmc').touched">
+                                                        Campo requerido!
+                                                      </mat-error>
+                                              </mat-form-field>
+                                              <mat-form-field class="w-1/4 pr-2">
+                                                  <mat-label>Nombre</mat-label>
+                                                  <input matInput [formControlName]="'nom'" style="font-weight: bold;"readonly/>
+                                              </mat-form-field>
+                                              <mat-form-field class="w-1/4 pr-2">
+                                                  <mat-label>Apellido</mat-label>
+                                                  <input matInput [formControlName]="'ape'" style="font-weight: bold;"readonly/>
+                                              </mat-form-field>
+                                            </div>
+                                            <div class="w-1/4">
+                                              <button *ngIf="mostrarBotonContribuyente" type="button" mat-flat-button class="w-2/4 pr-2 flex items-center justify-center" [color]="'primary'" (click)="openContribuyenteDialog()">
+                                                <mat-icon [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                                <span class="ml-2 mr-1">Add Contribuyente</span>
+                                              </button> 
+                                            </div>                                       
+                                        </div>
+                                        <div class="flex">
+                                          <div class="w-1/2">
+                                            <mat-form-field class="w-1/3">
+                                                <mat-label>Tipo Cuenta</mat-label>
+                                                <mat-select [formControlName]="'tipoCuenta'">
+                                                  <mat-error *ngIf="selectedCatastroForm.get('tipoCuenta').hasError('required') && selectedCatastroForm.get('tipoCuenta').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                                  <ng-container *ngFor="let dp of tiposCuentas">
+                                                    <mat-option [value]="dp.id" (onSelectionChange)="onTipoCuentaChange($event)">
+                                                      {{ dp.descripcion }}
+                                                    </mat-option>
+                                                  </ng-container>
+                                                </mat-select>
+                                              </mat-form-field>
+                                            <mat-form-field class="w-1/3 pr-2">
+                                                <mat-label>Cta Corriente</mat-label>
+                                                <input matInput 
+                                                    [formControlName]="'ctaCte'" (blur)="markAsTouched(selectedCatastroForm.get('ctaCte'))" readonly/>
+                                                    <mat-error *ngIf="selectedCatastroForm.get('ctaCte').hasError('required') && selectedCatastroForm.get('ctaCte').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                                    <mat-error *ngIf="selectedCatastroForm.get('ctaCte').hasError('maxLength') && selectedCatastroForm.get('ctaCte').touched">
+                                                      {{ getErrorMessage('ctaCte') }}
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/3 pr-2">
+                                                <mat-label>Padrón</mat-label>
+                                                <input matInput #padron
+                                                    [formControlName]="'padron'" (blur)="markAsTouched(selectedCatastroForm.get('padron'))" (mousedown)="$event.preventDefault()" />
+                                                    <mat-error *ngIf="selectedCatastroForm.get('padron').hasError('required') && selectedCatastroForm.get('padron').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                          </div>
+                                          <div class="w-1/2">
+                                            <mat-form-field class="w-1/6 pr-2">
+                                              <mat-label>Zona</mat-label>
+                                              <input matInput
+                                                  [formControlName]="'zonaCatastro'" (blur)="markAsTouched(selectedCatastroForm.get('zonaCatastro'))"readonly/>
+                                                  <mat-error *ngIf="selectedCatastroForm.get('zonaCatastro').hasError('required') && selectedCatastroForm.get('zonaCatastro').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/6 pr-2">
+                                              <mat-label>Manzana</mat-label>
+                                              <input #manzana
+                                                matInput
+                                                [formControlName]="'manzanaCatastro'"
+                                                (blur)="formatManzana()"
+                                              />
+                                              <mat-error *ngIf="selectedCatastroForm.get('manzanaCatastro').hasError('required') && selectedCatastroForm.get('manzanaCatastro').touched">
+                                                Campo requerido!
+                                              </mat-error>
+                                              <mat-error *ngIf="selectedCatastroForm.get('manzanaCatastro').hasError('pattern') && selectedCatastroForm.get('manzanaCatastro').touched">
+                                                Debe ingresar un valor numérico de hasta 4 dígitos.
+                                              </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/6 pr-2">
+                                                <mat-label>Lote</mat-label>
+                                                <input matInput
+                                                    [formControlName]="'loteCatastro'" 
+                                                    (blur)="formatLote()"/>
+                                                    <mat-error *ngIf="selectedCatastroForm.get('loteCatastro').hasError('required') && selectedCatastroForm.get('loteCatastro').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/6 pr-2">
+                                              <mat-label>Matricula</mat-label>
+                                              <input matInput
+                                                  [formControlName]="'matricula'" (blur)="markAsTouched(selectedCatastroForm.get('matricula'))"/>
+                                                  <mat-error *ngIf="selectedCatastroForm.get('matricula').hasError('required') && selectedCatastroForm.get('matricula').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/6 pr-2">
+                                                <mat-label>Nº Casa</mat-label>
+                                                <input matInput
+                                                    [formControlName]="'nroCasa'" (blur)="markAsTouched(selectedCatastroForm.get('nroCasa'))"/>
+                                                    <mat-error *ngIf="selectedCatastroForm.get('nroCasa').hasError('required') && selectedCatastroForm.get('nroCasa').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/6 pr-2">
+                                                <mat-label>Nº Finca</mat-label>
+                                                <input matInput
+                                                    [formControlName]="'numFinca'" (blur)="markAsTouched(selectedCatastroForm.get('numFinca'))"/>
+                                                    <mat-error *ngIf="selectedCatastroForm.get('numFinca').hasError('required') && selectedCatastroForm.get('numFinca').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                          </div>
+                                          
+                                        </div>
+                                        <div class="flex">
+                                          <div class="w-1/2">
+                                            <mat-form-field class="w-1/2 pr-2">
+                                              <mat-label>Direccion</mat-label>
+                                              <input matInput
+                                                  [formControlName]="'direccionCatastro'" (blur)="markAsTouched(selectedCatastroForm.get('direccionCatastro'))"/>
+                                                  <mat-error *ngIf="selectedCatastroForm.get('direccionCatastro').hasError('required') && selectedCatastroForm.get('direccionCatastro').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/2 pr-2">
+                                                <mat-label>Observación</mat-label>
+                                                <input matInput
+                                                    [formControlName]="'observacion'" (blur)="markAsTouched(selectedCatastroForm.get('observacion'))"/>
+                                                    <mat-error *ngIf="selectedCatastroForm.get('observacion').hasError('required') && selectedCatastroForm.get('observacion').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                          </div>
+                                          <div class="w-1/2">
+                                            <mat-form-field class="w-1/3 pr-2">
+                                                <mat-label>Loteamiento Zona</mat-label>
+                                                <input matInput
+                                                    [formControlName]="'loteamientoZona'" (blur)="markAsTouched(selectedCatastroForm.get('loteamientoZona'))"/>
+                                                    <mat-error *ngIf="selectedCatastroForm.get('loteamientoZona').hasError('required') && selectedCatastroForm.get('loteamientoZona').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/3 pr-2">
+                                                <mat-label>Loteamiento Manzana</mat-label>
+                                                <input matInput
+                                                    [formControlName]="'loteamientoManzana'" (blur)="markAsTouched(selectedCatastroForm.get('loteamientoManzana'))"/>
+                                                    <mat-error *ngIf="selectedCatastroForm.get('loteamientoManzana').hasError('required') && selectedCatastroForm.get('loteamientoManzana').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/3 pr-2">
+                                                <mat-label>Loteamiento Lote</mat-label>
+                                                <input matInput
+                                                    [formControlName]="'loteamientoLote'" (blur)="markAsTouched(selectedCatastroForm.get('loteamientoLote'))"/>
+                                                    <mat-error *ngIf="selectedCatastroForm.get('loteamientoLote').hasError('required') && selectedCatastroForm.get('loteamientoLote').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>      
+                                          </div>
+                                        </div>
+                                        <div class="flex">
+                                          <div class="w-3/4">
+                                            <mat-form-field class="w-1/5 pr-2">
+                                              <mat-label>Urbana Rural</mat-label>
+                                              <mat-select [formControlName]="'urbanaRural'" (blur)="markAsTouched(selectedCatastroForm.get('urbanaRural'))">
+                                                <mat-error *ngIf="selectedCatastroForm.get('urbanaRural').hasError('required') && selectedCatastroForm.get('urbanaRural').touched">
+                                                  Campo requerido!
+                                                </mat-error>
+                                                <ng-container *ngFor="let dp of categoriasEdificaciones">
+                                                  <mat-option [value]="dp.id">
+                                                    {{ dp.descripcion }}
+                                                  </mat-option>
+                                                </ng-container>
+                                              </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/5 pr-2">
+                                                <mat-label>Estado</mat-label>
+                                                <mat-select [formControlName]="'estado'" (blur)="markAsTouched(selectedCatastroForm.get('estado'))">
+                                                  <mat-error *ngIf="selectedCatastroForm.get('estado').hasError('required') && selectedCatastroForm.get('estado').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                                  <ng-container *ngFor="let dp of estados">
+                                                    <mat-option [value]="dp.id">
+                                                      {{ dp.descripcion }}
+                                                    </mat-option>
+                                                  </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/5 pr-2">
+                                                <mat-label>Suelo</mat-label>
+                                                <mat-select [formControlName]="'suelo'" (blur)="markAsTouched(selectedCatastroForm.get('suelo'))">
+                                                  <mat-error *ngIf="selectedCatastroForm.get('suelo').hasError('required') && selectedCatastroForm.get('suelo').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                                  <ng-container *ngFor="let dp of suelos">
+                                                    <mat-option [value]="dp.id">
+                                                      {{ dp.descripcion }}
+                                                    </mat-option>
+                                                  </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/5 pr-2">
+                                                <mat-label>Tenencia</mat-label>
+                                                <mat-select [formControlName]="'tenencia'" (blur)="markAsTouched(selectedCatastroForm.get('tenencia'))">
+                                                  <mat-error *ngIf="selectedCatastroForm.get('tenencia').hasError('required') && selectedCatastroForm.get('tenencia').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                                  <ng-container *ngFor="let dp of tenencias">
+                                                    <mat-option [value]="dp.id">
+                                                      {{ dp.descripcion }}
+                                                    </mat-option>
+                                                  </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                          </div>
+                                        </div>
+                                        <div class="mb-4 flex items-center gap-4">
+                                            <div class="w-1/4 pr-2">
+                                                <h2 class="text-2xl font-semibold">Superficies de Catastro</h2>
+                                            </div>
+                                            <div class="w-2/4 pr-2" *ngIf="mostrarABMSuperficie">
+                                              <button mat-flat-button style="background-color: #abebc6; color: black;" (click)="openABMSuperficieDialog(superficie)">
+                                                  ABM Superficie
+                                              </button>
+                                            </div>
+                                            <div class="w-2/4 pr-2" *ngIf="mostrarAgregarSuperficie">
+                                              <button mat-flat-button style="background-color: #abebc6; color: black;" (click)="openAgregarSuperficieDialog()">
+                                                  Agregar Superficie
+                                              </button>
+                                              <p>Contador de superficies: {{ superficieCount }} (debe ser mayor a cero)</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-table [dataSource]="superficiesArray" class="min-w-full bg-gray-100 rounded-lg shadow-md divide-y">                                                
+                                              <ng-container matColumnDef="id">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> ID </mat-header-cell>
+                                                <mat-cell *matCellDef="let superficie" class="text-center py-2 px-4 border-x"> {{superficie.id}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="ctaCte">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Cuenta Cte </mat-header-cell>
+                                                <mat-cell *matCellDef="let superficie" class="text-center py-2 px-4 border-x"> {{superficie.ctaCte}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="posicion">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Posición </mat-header-cell>
+                                                <mat-cell *matCellDef="let superficie" class="text-center py-2 px-4 border-x"> {{superficie.posicion}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="subZona">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Subzona </mat-header-cell>
+                                                <mat-cell *matCellDef="let superficie" class="text-center py-2 px-4 border-x"> {{superficie.subZona}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="superficieHa">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Superficie Ha </mat-header-cell>
+                                                <mat-cell *matCellDef="let superficie" class="text-center py-2 px-4 border-x"> {{superficie.superficieHa}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="superficieM2">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Superficie M2 </mat-header-cell>
+                                                <mat-cell *matCellDef="let superficie" class="text-center py-2 px-4 border-x"> {{superficie.superficieM2}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="borrado">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Borrado </mat-header-cell>
+                                                <mat-cell *matCellDef="let superficie" class="text-center py-2 px-4 border-x"> {{superficie.borrado}} </mat-cell>
+                                              </ng-container>
+
+                                              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                                             
+                                              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                                            </mat-table>
+                                        </div>
+                                          <br>
+                                          <div class="mb-4 flex items-center gap-4">
+                                            <div class="w-1/4 pr-2">
+                                                <h2 class="text-2xl font-semibold">Dimensiones de Catastro</h2>
+                                            </div>
+                                            <div class="w-2/4 pr-2" *ngIf="mostrarABMDimension">
+                                              <button mat-flat-button style="background-color: #abebc6; color: black;" (click)="openABMDimensionDialog()">
+                                                  ABM Dimensión
+                                              </button>
+                                            </div>
+                                            <div class="w-2/4 pr-2" *ngIf="mostrarAgregarDimension">
+                                              <button mat-flat-button style="background-color: #abebc6; color: black;" (click)="openAgregarDimensionDialog()">
+                                                  Agregar Dimensión
+                                              </button>
+                                              <p>Contador de dimensiones: {{ dimensionCount }} (debe ser mayor a cero)</p>
+                                            </div>
+                                        </div>
+                                          <div class="flex">
+                                            <mat-table [dataSource]="dimensionesArray" class="min-w-full bg-gray-100 rounded-lg shadow-md divide-y">
+                                              <!-- Definición de columnas existentes -->
+                                              <ng-container matColumnDef="dimension">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> ID </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.dimension}} </mat-cell>
+                                              </ng-container> 
+                                              <ng-container matColumnDef="ctaCte">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Cuenta Cte </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.ctaCte}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="areaDimension">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Área </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.areaDimension}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="calle">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Calle </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{getCalles(dimension.calle)}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="callePrincipal">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Calle Principal </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{getCallesPrincipales(dimension.callePrincipal)}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="categoriaZona">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Categoria Zona </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{getCategoriasZonas(dimension.categoriaZona)}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="frentes">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Frentes </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{getFrentes(dimension.frentes)}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="orientacion">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Orientación </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{getOrientaciones(dimension.orientacion)}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="posicion">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Posición</mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.posicion}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="tramoCalle">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Tramo Calle </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.tramoCalle}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="observacion">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Observación </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.observacion}} </mat-cell>
+                                              </ng-container>
+                                             <!-- <ng-container matColumnDef="desdeAnio">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> desdeAnio </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.desdeAnio}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="borrado">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Borrado </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.borrado}} </mat-cell>
+                                              </ng-container>
+                                             <ng-container matColumnDef="utm1x">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> utm1x </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.utm1x}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="utm1y">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> utm1y </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.utm1y}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="utm2x">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> utm2x </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.utm2x}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="utm2y">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> utm2y</mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-center py-2 px-4 border-x"> {{dimension.utm2y}} </mat-cell>
+                                              </ng-container>-->
+                                          
+                                              <!-- Columna para el botón-->
+                                              <ng-container matColumnDef="acciones">
+                                                <mat-header-cell *matHeaderCellDef class="text-right py-3 px-4 border-x"> Acciones </mat-header-cell>
+                                                <mat-cell *matCellDef="let dimension" class="text-right py-2 px-4 border-x">
+                                                  <button mat-flat-button color="warn" style="margin-left: auto;">Eliminar</button>
+                                                </mat-cell>
+                                              </ng-container>
+
+                                              <!-- Fila de encabezados -->
+                                              <mat-header-row *matHeaderRowDef="displayedColumns_1"></mat-header-row>
+                                              <!-- Fila de datos -->
+                                              <mat-row *matRowDef="let row; columns: displayedColumns_1;"></mat-row>
+                                            </mat-table>
+                                          </div>
+                                          <br>
+                                          <div class="mb-4 flex items-center gap-4">
+                                            <div class="w-1/4 pr-2">
+                                                <h2 class="text-2xl font-semibold">Construcciones de Catastro</h2>
+                                            </div>
+                                            <div class="w-2/4 pr-2" *ngIf="mostrarABMConstruccion">
+                                                <button mat-flat-button style="background-color: #abebc6; color: black;" (click)="openABMConstruccionDialog()">
+                                                    ABM Construcción
+                                                </button>
+                                            </div>
+                                            <div class="w-2/4 pr-2" *ngIf="mostrarAgregarConstruccion">
+                                              <button mat-flat-button style="background-color: #abebc6; color: black;" (click)="openAgregarConstruccionDialog()">
+                                                  Agregar Construcción
+                                              </button>
+                                              <p>Contador de construcciones: {{ construccionCount }}</p>
+                                            </div>
+                                          </div>
+                                        <div class="flex">
+                                            <mat-table [dataSource]="construccionesArray" class="min-w-full bg-gray-100 rounded-lg shadow-md divide-y">
+                                              <!-- Definición de columnas existentes -->
+                                              <ng-container matColumnDef="nroFilaConstruccion">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> ID </mat-header-cell>
+                                                <mat-cell *matCellDef="let construccion" class="text-center py-2 px-4 border-x"> {{construccion.nroFilaConstruccion}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="ctaCte">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Cuenta Cte </mat-header-cell>
+                                                <mat-cell *matCellDef="let construccion" class="text-center py-2 px-4 border-x"> {{construccion.ctaCte}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="categoriaConstruccion">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Categoría </mat-header-cell>
+                                                <mat-cell *matCellDef="let construccion" class="text-center py-2 px-4 border-x"> {{getCategoriaConstruccion(construccion.categoriaConstruccion)}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="tipoConstruccion">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Tipo </mat-header-cell>
+                                                <mat-cell *matCellDef="let construccion" class="text-center py-2 px-4 border-x"> {{getTipoConstruccion(construccion.tipoConstruccion)}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="anioConstruccion">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Año </mat-header-cell>
+                                                <mat-cell *matCellDef="let construccion" class="text-center py-2 px-4 border-x"> {{construccion.anioConstruccion}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="area">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Área </mat-header-cell>
+                                                <mat-cell *matCellDef="let construccion" class="text-center py-2 px-4 border-x"> {{construccion.area}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="obs">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Observación </mat-header-cell>
+                                                <mat-cell *matCellDef="let construccion" class="text-center py-2 px-4 border-x"> {{construccion.obs}} </mat-cell>
+                                              </ng-container>
+                                              <ng-container matColumnDef="borrado">
+                                                <mat-header-cell *matHeaderCellDef class="text-center py-3 px-4 border-x"> Borrado </mat-header-cell>
+                                                <mat-cell *matCellDef="let construccion" class="text-center py-2 px-4 border-x"> {{construccion.borrado}} </mat-cell>
+                                              </ng-container>
+                                              <!-- Columna para el botón 
+                                              <ng-container matColumnDef="acciones">
+                                                <mat-header-cell *matHeaderCellDef class="text-right py-3 px-4 border-x"> Acciones </mat-header-cell>
+                                                <mat-cell *matCellDef="let construccion" class="text-right py-2 px-4 border-x">
+                                                  <button mat-flat-button color="warn" style="margin-left: auto;">Eliminar</button>
+                                                </mat-cell>
+                                              </ng-container>-->
+                                          
+                                              <!-- Fila de encabezados -->
+                                              <mat-header-row *matHeaderRowDef="displayedColumns_2"></mat-header-row>
+                                              <!-- Fila de datos -->
+                                              <mat-row *matRowDef="let row; columns: displayedColumns_2;"></mat-row>
+                                            </mat-table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between w-full border-t px-8 py-4">
+                              <div class="flex items-center">
+                                <div class="flex items-center mr-4" *ngIf="flashMessage">
+                                    <ng-container *ngIf="flashMessage === 'success'">
+                                        <mat-icon class="text-green-500" [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                        <span class="ml-2">Registro Actualizado</span>
+                                    </ng-container>
+                            
+                                    <ng-container *ngIf="flashMessage === 'error'">
+                                        <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                        <span class="ml-2">Se ha producido un error, inténtelo de nuevo.</span>
+                                    </ng-container>
+                            
+                                    <ng-container *ngIf="flashMessage === 'validacion'">
+                                        <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                        <span class="ml-2">Campos incompletos.</span>
+                                    </ng-container>
+                            
+                                    <!-- Agregar nuevos mensajes de error -->
+                                    <ng-container *ngIf="flashMessage === 'Ya existe'">
+                                        <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                        <span class="ml-2">La cuenta corriente ya existe.</span>
+                                    </ng-container>
+                            
+                                    <ng-container *ngIf="flashMessage === 'No encontrado'">
+                                        <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                        <span class="ml-2">Registro no encontrado.</span>
+                                    </ng-container>
+                            
+                                    <ng-container *ngIf="flashMessage === 'Error interno'">
+                                        <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                        <span class="ml-2">Error interno, por favor intente nuevamente.</span>
+                                    </ng-container>
+                                </div>
+                            
+                                <button mat-flat-button (click)="updateSelectedCatastro()" [color]="'primary'">
+                                    {{ botonTexto }}
+                                </button>
+                            </div>
+                          </div>
+                        </form>
+                    </div>
+                </div>
+            </ng-template>
+            
+
+            <ng-template #noCatastros>
+                <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">No hay Registros!</div>
+            </ng-template>
+
+        </div>
+
+    </div>
+
+</div>
+

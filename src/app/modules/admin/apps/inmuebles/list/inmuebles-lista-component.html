@@ -1,0 +1,531 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+
+    <!-- Header -->
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+
+        <!-- Loader -->
+        <div
+            class="absolute inset-x-0 bottom-0"
+            *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">Inmuebles</div>
+
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+
+            <!-- Búsqueda -->
+            <mat-form-field
+                class="fuse-mat-dense fuse-mat-rounded min-w-64"
+                [subscriptSizing]="'dynamic'">
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+
+                <input
+                    matInput
+                    [formControl]="searchInputControl"
+                    [autocomplete]="'off'"
+                    [placeholder]="'Buscar inmuebles'">
+            </mat-form-field>
+            <!-- Botón Agregar -->
+            <button mat-flat-button class="ml-4" [color]="'primary'" (click)="agregarInmueble()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">Agregar Inmueble</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <!-- Lista de Dominios -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(inmuebles$ | async) as inmuebles">
+                <ng-container *ngIf="inmuebles.length > 0; else noInmuebles">
+                    <div class="grid">
+                        <!-- Header     -->
+                        <div
+                            class="inventory-grid z-10 sticky top-0 grid grid-cols-4 gap-8 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                            matSort
+                            matSortDisableClear>
+
+                            <div
+                                class="hidden sm:block"
+                                [mat-sort-header]="'id'">
+                                ID
+                            </div>
+
+                            <div
+                                class="hidden sm:block"
+                                [mat-sort-header]="'nombreContribuyente'">
+                                Contribuyente
+                            </div>
+
+                            <div
+                                class="hidden sm:block"
+                                [mat-sort-header]="'ctaCorrientePadron'">
+                                Cta Corriente Padron
+                            </div>
+
+                            <div class="hidden sm:block">Detalle</div>
+
+                        </div>
+
+                        <!-- Rows -->
+                        <ng-container *ngIf="(inmuebles$ | async) as inmuebles">
+                            <ng-container *ngFor="let inmueble of inmuebles; trackBy: trackByFn">
+                                <div class="inventory-grid grid grid-cols-4 items-center gap-4 py-3 px-6 md:px-8 border-b">
+
+                                    <!-- Código -->
+                                    <div class="hidden sm:block truncate" aria-readonly="">
+                                        {{inmueble.id}}
+                                    </div>
+
+                                    <!-- {{registro.contribuyente.nombre}} {{registro.contribuyente.apellido}} -->
+                                    <div class="hidden sm:block truncate">
+                                        {{inmueble.contribuyente?.nombre}} {{inmueble.contribuyente?.apellido}}
+                                    </div>
+
+                                    <!-- {{registro.categoria.descripcion}} -->
+                                    <div class="hidden sm:block truncate">
+                                        {{inmueble.ctaCorrientePadron}}
+                                    </div>
+
+                                    <!-- Details button -->
+                                    <div>
+                                        <button
+                                            class="min-w-10 min-h-7 h-7 px-2 leading-6"
+                                            mat-stroked-button
+                                            (click)="toggleDetails(inmueble.id)">
+                                            <mat-icon
+                                                class="icon-size-5"
+                                                [svgIcon]="selectedInmueble?.id === inmueble.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="grid">
+                                    <ng-container *ngIf="selectedInmueble?.id === inmueble.id">
+                                        <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: inmueble}"></ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator
+                        class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                        [ngClass]="{'pointer-events-none': isLoading}"
+                        [length]="pagination.length"
+                        [pageIndex]="pagination.page"
+                        [pageSize]="pagination.size"
+                        [pageSizeOptions]="[5, 10, 25, 100]"
+                        [showFirstLastButtons]="true">
+                    </mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <ng-template
+                #rowDetailsTemplate
+                let-inmueble>
+                <div class="shadow-lg overflow-hidden">
+                    <div class="flex border-b">
+                        <!-- Selected registro form -->
+                        <form
+                            class="flex flex-col w-full"
+                            [formGroup]="selectedInmuebleForm">
+
+                            <div class="flex flex-col w-full p-8">
+                                <div class="flex flex-auto flex-wrap">
+                                    <div class="flex flex-col w-full lg:w-1/4 sm:pl-8">
+                                        <div class="flex">
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>ID</mat-label>
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'id'" style="color: red; font-weight: bold;">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Cta Corriente</mat-label>
+                                                <input matInput
+                                                    [formControlName]="'ctaCorrientePadron'" (blur)="markAsTouched(selectedInmuebleForm.get('ctaCorrientePadron'))"/>
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('ctaCorrientePadron').hasError('required') && selectedInmuebleForm.get('ctaCorrientePadron').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('ctaCorrientePadron').hasError('maxLength') && selectedInmuebleForm.get('ctaCorrientePadron').touched">
+                                                      {{ getErrorMessage('ctaCorrientePadron') }}
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Nombre</mat-label>
+                                                <input placeholder="Ingresa Contri"
+                                                    matInput
+                                                    [formControlName]="'nombreContribuyente'" style="color: red; font-weight: bold;" (blur)="markAsTouched(selectedInmuebleForm.get('nombreContribuyente'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('nombreContribuyente').hasError('required') && selectedInmuebleForm.get('nombreContribuyente').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Apellido</mat-label>
+                                                <input placeholder="Ingresa Contri"
+                                                    matInput
+                                                    [formControlName]="'apellidoContribuyente'" style="color: red; font-weight: bold;">
+                                            </mat-form-field>
+
+                                            <div class="flex flex-col w-full lg:w-1/4">
+                                                <div class="flex">
+                                                    <mat-label></mat-label>
+                                                    <button type="button" mat-flat-button class="ml-4" [color]="'primary'" (click)="openComposeDialog()" [disabled]="isActualizarDisabled">
+                                                        <mat-icon [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon> 
+                                                        <span class="ml-2 mr-1">Buscar Contribuyente</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Direccion</mat-label>
+                                                <input placeholder="Ingresa Dirección"
+                                                    matInput
+                                                    [formControlName]="'direccionInmueble'" (blur)="markAsTouched(selectedInmuebleForm.get('direccionInmueble'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('direccionInmueble').hasError('required') && selectedInmuebleForm.get('direccionInmueble').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Finca Inmueble</mat-label>
+                                                <input placeholder="Ingresa Finca"
+                                                    matInput
+                                                    [formControlName]="'fincaInmueble'" (blur)="markAsTouched(selectedInmuebleForm.get('fincaInmueble'))"/>
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('fincaInmueble').hasError('required') && selectedInmuebleForm.get('fincaInmueble').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('fincaInmueble').hasError('maxLength') && selectedInmuebleForm.get('fincaInmueble').touched">
+                                                      {{ getErrorMessage('fincaInmueble') }}
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Piso</mat-label>
+                                                <input placeholder="Ingresa Piso" matInput formControlName="pisoInmueble"
+                                                  (blur)="markAsTouched(selectedInmuebleForm.get('pisoInmueble'))"/>
+                                                <mat-error *ngIf="selectedInmuebleForm.get('pisoInmueble').hasError('required') && selectedInmuebleForm.get('pisoInmueble').touched">
+                                                  Campo requerido!
+                                                </mat-error>
+                                                <mat-error *ngIf="selectedInmuebleForm.get('pisoInmueble').hasError('maxLength') && selectedInmuebleForm.get('pisoInmueble').touched">
+                                                  {{ getErrorMessage('pisoInmueble') }}
+                                                </mat-error>
+                                            </mat-form-field>
+                                              
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Departamento</mat-label>
+                                                <input placeholder="Ingresa Departamento"
+                                                    matInput
+                                                    [formControlName]="'dptoInmueble'" (blur)="markAsTouched(selectedInmuebleForm.get('dptoInmueble'))"/>
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('dptoInmueble').hasError('required') && selectedInmuebleForm.get('dptoInmueble').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('dptoInmueble').hasError('maxLength') && selectedInmuebleForm.get('dptoInmueble').touched">
+                                                      {{ getErrorMessage('dptoInmueble') }}
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Nº Casa</mat-label>
+                                                <input placeholder="Ingresa Nº Casa"
+                                                    matInput
+                                                    [formControlName]="'numCasaInmueble'" (blur)="markAsTouched(selectedInmuebleForm.get('numCasaInmueble'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('numCasaInmueble').hasError('required') && selectedInmuebleForm.get('numCasaInmueble').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Sup Tierra M2</mat-label>
+                                                <input placeholder="Ingresa Tierra M2"
+                                                    matInput
+                                                    [formControlName]="'superficieTierraM2'" (blur)="markAsTouched(selectedInmuebleForm.get('superficieTierraM2'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('superficieTierraM2').hasError('required') && selectedInmuebleForm.get('superficieTierraM2').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Sup Edificado M2</mat-label>
+                                                <input placeholder="Ingresa edificado M2"
+                                                    matInput
+                                                    [formControlName]="'superficieEdificadoM2'" (blur)="markAsTouched(selectedInmuebleForm.get('superficieEdificadoM2'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('superficieEdificadoM2').hasError('required') && selectedInmuebleForm.get('superficieEdificadoM2').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col w-full lg:w-1/4 sm:pl-8">
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Metros Lineal Norte</mat-label>
+                                                <input placeholder="Ingresa Lineal Norte"
+                                                    matInput
+                                                    [formControlName]="'metrosLinealNorte'" (blur)="markAsTouched(selectedInmuebleForm.get('metrosLinealNorte'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('metrosLinealNorte').hasError('required') && selectedInmuebleForm.get('metrosLinealNorte').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Metros Lineal Sur</mat-label>
+                                                <input placeholder="Ingresa Lineal Sur"
+                                                    matInput
+                                                    [formControlName]="'metrosLinealSur'" (blur)="markAsTouched(selectedInmuebleForm.get('metrosLinealSur'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('metrosLinealSur').hasError('required') && selectedInmuebleForm.get('metrosLinealSur').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Metros Lineal Este</mat-label>
+                                                <input placeholder="Ingresa Lineal Este"
+                                                    matInput
+                                                    [formControlName]="'metrosLinealEste'" (blur)="markAsTouched(selectedInmuebleForm.get('metrosLinealEste'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('metrosLinealEste').hasError('required') && selectedInmuebleForm.get('metrosLinealEste').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Metros Lineal Oeste</mat-label>
+                                                <input placeholder="Ingresa Lineal Oeste"
+                                                    matInput
+                                                    [formControlName]="'metrosLinealOeste'" (blur)="markAsTouched(selectedInmuebleForm.get('metrosLinealOeste'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('metrosLinealOeste').hasError('required') && selectedInmuebleForm.get('metrosLinealOeste').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Fecha Inscripcion</mat-label>
+                                                <input type="date" matInput
+                                                    [formControlName]="'fechaInscripcion'"
+                                                    (blur)="markAsTouched(selectedInmuebleForm.get('fechaInscripcion'))">
+                                                <mat-error *ngIf="selectedInmuebleForm.get('fechaInscripcion').hasError('required') && selectedInmuebleForm.get('fechaInscripcion').touched">
+                                                    Campo requerido!
+                                                </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Cantidad Plantas</mat-label>
+                                                <input placeholder="Ingresa Cantidad Plantas"
+                                                    matInput
+                                                    [formControlName]="'cantidadPlantas'" (blur)="markAsTouched(selectedInmuebleForm.get('cantidadPlantas'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('cantidadPlantas').hasError('required') && selectedInmuebleForm.get('cantidadPlantas').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Superficie Tierra Ha</mat-label>
+                                                <input placeholder="Ingresa superficie"
+                                                    matInput
+                                                    [formControlName]="'superficieTierraHa'" (blur)="markAsTouched(selectedInmuebleForm.get('superficieTierraHa'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('superficieTierraHa').hasError('required') && selectedInmuebleForm.get('superficieTierraHa').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Latitud</mat-label>
+                                                <input placeholder="Ingresa latitud"
+                                                    matInput
+                                                    [formControlName]="'latitud'" (blur)="markAsTouched(selectedInmuebleForm.get('latitud'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('latitud').hasError('required') && selectedInmuebleForm.get('latitud').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Longitud</mat-label>
+                                                <input placeholder="Ingresa Longitud"
+                                                    matInput
+                                                    [formControlName]="'longitud'" (blur)="markAsTouched(selectedInmuebleForm.get('longitud'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('longitud').hasError('required') && selectedInmuebleForm.get('longitud').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col w-full lg:w-1/4 sm:pl-8">
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Antiguedad</mat-label>
+                                                <input placeholder="Ingresa Antiguedad"
+                                                    matInput
+                                                    [formControlName]="'antiguedadEdificacion'" (blur)="markAsTouched(selectedInmuebleForm.get('antiguedadEdificacion'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('antiguedadEdificacion').hasError('required') && selectedInmuebleForm.get('antiguedadEdificacion').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Año Construcción</mat-label>
+                                                <input placeholder="Ingresa Año Construcción"
+                                                    matInput
+                                                    [formControlName]="'anhoConstruccion'" (blur)="markAsTouched(selectedInmuebleForm.get('anhoConstruccion'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('anhoConstruccion').hasError('required') && selectedInmuebleForm.get('anhoConstruccion').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Zona Catastro</mat-label>
+                                                <input placeholder="Ingresa Zona Catastro"
+                                                    matInput
+                                                    [formControlName]="'zonaCatastro'" (blur)="markAsTouched(selectedInmuebleForm.get('zonaCatastro'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('zonaCatastro').hasError('required') && selectedInmuebleForm.get('zonaCatastro').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Manzana Catastro</mat-label>
+                                                <input placeholder="Ingresa Manzana"
+                                                    matInput
+                                                    [formControlName]="'manzanaCatastro'" (blur)="markAsTouched(selectedInmuebleForm.get('manzanaCatastro'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('manzanaCatastro').hasError('required') && selectedInmuebleForm.get('manzanaCatastro').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Lote Catastro</mat-label>
+                                                <input placeholder="Ingresa Lote Catastro"
+                                                    matInput
+                                                    [formControlName]="'loteCatastro'" (blur)="markAsTouched(selectedInmuebleForm.get('loteCatastro'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('loteCatastro').hasError('required') && selectedInmuebleForm.get('loteCatastro').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Piso Catastro</mat-label>
+                                                <input placeholder="Ingresa Piso Catastro"
+                                                    matInput
+                                                    [formControlName]="'pisoCatastro'" (blur)="markAsTouched(selectedInmuebleForm.get('pisoCatastro'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('pisoCatastro').hasError('required') && selectedInmuebleForm.get('pisoCatastro').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Salón Catastro</mat-label>
+                                                <input placeholder="Ingresa Salón Catastro"
+                                                    matInput
+                                                    [formControlName]="'salonCatastro'" (blur)="markAsTouched(selectedInmuebleForm.get('salonCatastro'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('salonCatastro').hasError('required') && selectedInmuebleForm.get('salonCatastro').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Padrón Catastro</mat-label>
+                                                <input placeholder="Ingresa Padrón Catastro"
+                                                    matInput
+                                                    [formControlName]="'padronCatastro'" (blur)="markAsTouched(selectedInmuebleForm.get('padronCatastro'))">
+                                                    <mat-error *ngIf="selectedInmuebleForm.get('padronCatastro').hasError('required') && selectedInmuebleForm.get('padronCatastro').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <div class="flex flex-col w-full">
+                                                <span class="font-semibold mb-2">Barrido Limpieza</span>
+                                                <mat-slide-toggle
+                                                    [formControlName]="'barridoLimpieza'" 
+                                                    [color]="'primary'">
+                                                    {{ selectedInmuebleForm.get('barridoLimpieza').value === true ? 'Activo' : 'Inactivo' }}
+                                                </mat-slide-toggle>
+                                            </div>
+                                            <div class="flex flex-col w-full">
+                                                <span class="font-semibold mb-2">Recolección Basura</span>
+                                                <mat-slide-toggle
+                                                    [formControlName]="'recoleccionBasura'"
+                                                    [color]="'primary'">
+                                                    {{ selectedInmuebleForm.get('recoleccionBasura').value === true ? 'Activo' : 'Inactivo' }}
+                                                </mat-slide-toggle>
+                                            </div>
+                                        </div>
+                                        <mat-form-field class="w-full">
+                                            <mat-label>Categoria Edificacion</mat-label>
+                                            <mat-select [formControlName]="'categoriaEdificacion'" (blur)="markAsTouched(selectedInmuebleForm.get('categoriaEdificacion'))">
+                                                <mat-error *ngIf="selectedInmuebleForm.get('categoriaEdificacion').hasError('required') && selectedInmuebleForm.get('categoriaEdificacion').touched">
+                                                    Campo requerido!
+                                                </mat-error>
+                                                <ng-container *ngFor="let dp of categoriasEdificaciones">
+                                                    <mat-option [value]="dp.id">
+                                                        {{dp.descripcion}}
+                                                    </mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between w-full border-t px-8 py-4">
+                                <div class="flex items-center">
+                                    <div
+                                        class="flex items-center mr-4"
+                                        *ngIf="flashMessage">
+
+                                        <ng-container *ngIf="flashMessage === 'success'">
+                                            <mat-icon
+                                                class="text-green-500"
+                                                [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                            <span class="ml-2">Inmueble Actualizado</span>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="flashMessage === 'error'">
+                                            <mat-icon
+                                                class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">Se ha producido un error, inténtelo de nuevo.</span>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="flashMessage === 'validacion'">
+                                            <mat-icon
+                                                class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">Campos incompletos.</span>
+                                        </ng-container>
+                                    </div>
+
+                                    <button
+                                        mat-flat-button
+                                        (click)="updateSelectedInmueble()"
+                                        [color]="'primary'">
+                                        Actualizar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template #noInmuebles>
+                <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">No hay Registros!</div>
+            </ng-template>
+
+        </div>
+
+    </div>
+
+</div>
+

@@ -1,0 +1,441 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+
+    <!-- Header -->
+    <div
+        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">Registros</div>
+
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+
+            <!-- Búsqueda de Dominios -->
+            <mat-form-field class="fuse-mat-dense fuse-mat-rounded min-w-64" [subscriptSizing]="'dynamic'">
+                <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+
+                <input
+                    matInput
+                    [formControl]="searchInputControl"
+                    [autocomplete]="'off'"
+                    [placeholder]="'Buscar por Nombre'">
+            </mat-form-field>
+            <!-- Botón Agregar Dominio -->
+            <button mat-flat-button class="ml-4" [color]="'primary'" (click)="agregarRegistro()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">Agregar Registro</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <!-- Lista de Dominios -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(registros$ | async) as registros">
+                <ng-container *ngIf="registros.length > 0; else noRegistros">
+                    <div class="grid">
+                        <!-- Header     -->
+                        <div class="inventory-grid z-10 sticky top-0 grid grid-cols-4 gap-8 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                            matSort matSortDisableClear>
+
+                            <div class="hidden sm:block" [mat-sort-header]="'id'">
+                                ID
+                            </div>
+
+                            <div class="hidden sm:block" [mat-sort-header]="'nombreContribuyente'">
+                                Contribuyente
+                            </div>
+
+                            <div class="hidden sm:block" [mat-sort-header]="'numeroRegistro'">
+                                Nº Registro
+                            </div>
+
+                            <div class="hidden sm:block">Detalle</div>
+
+                        </div>
+
+                        <!-- Rows -->
+                        <ng-container *ngIf="(registros$ | async) as registros">
+                            <ng-container *ngFor="let registro of registros; trackBy: trackByFn">
+                                <div
+                                    class="inventory-grid grid grid-cols-4 items-center gap-4 py-3 px-6 md:px-8 border-b">
+
+                                    <!-- Código -->
+                                    <div class="hidden sm:block truncate" aria-readonly="">
+                                        {{registro.id}}
+                                    </div>
+
+                                    <!-- {{registro.contribuyente.nombre}} {{registro.contribuyente.apellido}} -->
+                                    <div class="hidden sm:block truncate">
+                                        {{registro.contribuyente?.nombre}} {{registro.contribuyente?.apellido}}
+                                    </div>
+
+                                    <!-- {{registro.categoria.descripcion}} -->
+                                    <div class="hidden sm:block truncate">
+                                        {{registro.numeroRegistro}}
+                                    </div>
+
+                                    <!-- Details button -->
+                                    <div>
+                                        <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button
+                                            (click)="toggleDetails(registro.id)">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="selectedRegistro?.id === registro.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="grid">
+                                    <ng-container *ngIf="selectedRegistro?.id === registro.id">
+                                        <ng-container
+                                            *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: registro}"></ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator
+                        class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                        [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.length"
+                        [pageIndex]="pagination.page" [pageSize]="pagination.size" [pageSizeOptions]="[5, 10, 25, 100]"
+                        [showFirstLastButtons]="true">
+                    </mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <ng-template #rowDetailsTemplate let-registro>
+                <div class="shadow-lg overflow-hidden">
+                    <div class="flex border-b">
+                        <!-- Selected registro form -->
+                        <form class="flex flex-col w-full" [formGroup]="selectedRegistroForm">
+
+                            <div class="flex flex-col w-full p-8">
+                                <div class="flex flex-auto flex-wrap">
+                                    <!-- <div class="flex flex-col w-full lg:w-1/4 sm:pl-8"> -->
+                                    <div class="flex flex-col w-full lg:w-3/4 sm:pl-8 ">
+                                        <div class="text-lg font-medium tracking-tight leading-6 truncate">Datos del
+                                            Contribuyente</div>
+                                        <div class="flex"></div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <input 
+                                                    placeholder="Nombre del Contribuyente"
+                                                    matInput
+                                                    formControlName="nombreContribuyente"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('nombreContribuyente'))"
+                                                    style="color: red; font-weight: bold;">
+                                                <mat-error *ngIf="selectedRegistroForm.get('nombreContribuyente').hasError('required') && selectedRegistroForm.get('nombreContribuyente').touched">
+                                                    Nombre es requerido
+                                                </mat-error>
+                                                <!--mat-label>Nombre</mat-label-->
+                                                <input placeholder="Nombre del Contribuyente" matInput
+                                                    [formControlName]="'nombreContribuyente'"
+                                                    style="color: red; font-weight: bold;">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <!--mat-label>Apellido</mat-label-->
+                                                <input placeholder="Apellido del Contribuyente" matInput
+                                                    [formControlName]="'apellidoContribuyente'"
+                                                    style="color: red; font-weight: bold;">
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col w-full lg:w-1/4">
+                                        <div class="flex">
+                                            <mat-label></mat-label>
+                                            <button type="button" mat-flat-button class="ml-4" [color]="'primary'" (click)="openComposeDialog()" [disabled]="isActualizarDisabled">
+                                                <mat-icon [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon> 
+                                                <span class="ml-2 mr-1">Buscar Contribuyente</span>
+                                            </button>
+                                            <button mat-flat-button class="ml-4" [color]="'primary'"
+                                                (click)="openComposeDialog()">
+                                                <mat-icon [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                                <span class="ml-2 mr-1">Buscar Contribuyente</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-auto flex-wrap">
+                                    <div class="flex flex-col w-full lg:w-3/4 sm:pl-8">
+                                        <div class="flex">
+                                            <mat-form-field class="w-1/5 pr-2">
+                                                <mat-label>ID</mat-label>
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'id'" style="font-weight: bold; text-align: center;">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/5 pr-2">
+                                                <mat-label>Nº Registro</mat-label>
+                                                <input #nRegistro placeholder="Nº Registro" matInput readonly
+                                                    [formControlName]="'numeroRegistro'">
+                                            </mat-form-field>
+                                            <mat-label>  </mat-label>
+                                            <button type="button" mat-flat-button class="w-2/5 pr-2" [color]="'primary'" (click)="openComposeDialog()" [disabled]="isActualizarDisabled">
+                                                <mat-icon [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon> 
+                                                <span class="ml-2 mr-1">Buscar Contribuyente</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="text-lg font-medium tracking-tight leading-6 truncate">Datos del Contribuyente
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-full pr-2">
+                                                <input 
+                                                    placeholder="Nombre del Contribuyente"
+                                                    matInput readonly
+                                                    formControlName="nombreContribuyente"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('nombreContribuyente'))"
+                                                    style="color: red; font-weight: bold;">
+                                                <mat-error *ngIf="selectedRegistroForm.get('nombreContribuyente').hasError('required') && selectedRegistroForm.get('nombreContribuyente').touched">
+                                                    Nombre es requerido
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-full pr-2">
+                                                <!--mat-label>Apellido</mat-label-->
+                                                <input placeholder="Apellido del Contribuyente" matInput readonly
+                                                    [formControlName]="'apellidoContribuyente'"
+                                                    style="color: red; font-weight: bold;">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>Número Computación</mat-label>
+                                                <input placeholder="Ingresa Nº Computación" matInput>
+                                                <!--
+                                                    [formControlName]="'numeroComputacion'"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('numeroPasaporte'))">
+                                                <mat-error *ngIf="selectedRegistroForm.get('numeroPasaporte').hasError('required') && selectedRegistroForm.get('numeroPasaporte').touched">
+                                                    Campo requerido!
+                                                </mat-error>-->
+                                            </mat-form-field>
+
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>Número Ficha</mat-label>
+                                                <input placeholder="Ingresa Nº Ficha"
+                                                    matInput >
+                                                  <!--  formControlName="numeroFicha"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('carnetInmigracion'))">
+                                                <mat-error *ngIf="selectedRegistroForm.get('carnetInmigracion').hasError('required') && selectedRegistroForm.get('carnetInmigracion').touched">
+                                                    Campo requerido!
+                                                </mat-error>-->
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col w-full lg:w-1/4 sm:pl-8">
+                                        <div class="flex">
+                                            <mat-form-field class="w-full pr-2">
+                                                <mat-label>Grupo Sanguineo</mat-label>
+                                                <mat-select [formControlName]="'grupoSanguineo'"
+                                                (blur)="markAsTouched(selectedRegistroForm.get('grupoSanguineo'))">
+                                                    <mat-error *ngIf="selectedRegistroForm.get('grupoSanguineo').hasError('required') && selectedRegistroForm.get('grupoSanguineo').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                                    <ng-container *ngFor="let dp of gruposSanguineos">
+                                                        <mat-option [value]="dp.id">
+                                                            {{dp.descripcion}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-full pr-2">
+                                                <mat-label>Categoria</mat-label>
+                                                <mat-select [formControlName]="'categoria'"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('categoria'))">
+                                                    <mat-error *ngIf="selectedRegistroForm.get('categoria').hasError('required') && selectedRegistroForm.get('categoria').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                                    <ng-container *ngFor="let dp of categorias">
+                                                        <mat-option [value]="dp.id">
+                                                            {{dp.descripcion}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-full pr-2">
+                                                <mat-label>Concepto</mat-label>
+                                                <mat-select [formControlName]="'conceptoPago'"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('conceptoPago'))">
+                                                    <mat-error *ngIf="selectedRegistroForm.get('conceptoPago').hasError('required') && selectedRegistroForm.get('conceptoPago').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                                    <ng-container *ngFor="let dp of conceptosPagos">
+                                                        <mat-option [value]="dp.id">
+                                                            {{dp.descripcion}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-full pr-2">
+                                                <mat-label>Estado</mat-label>
+                                                <mat-select [formControlName]="'estadoRegistro'"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('estadoRegistro'))">
+                                                    <mat-error *ngIf="selectedRegistroForm.get('estadoRegistro').hasError('required') && selectedRegistroForm.get('estadoRegistro').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                                    <ng-container *ngFor="let dp of estadosRegistros">
+                                                        <mat-option [value]="dp.id">
+                                                            {{dp.descripcion}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col w-full lg:w-1/4 sm:pl-8">
+                                        <div class="flex">
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>Fecha Expedición</mat-label>
+                                                <input type="date" matInput readonly
+                                                    [formControlName]="'fechaExpedicion'"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('fechaExpedicion'))">
+                                                <mat-error *ngIf="selectedRegistroForm.get('fechaExpedicion').hasError('required') && selectedRegistroForm.get('fechaExpedicion').touched">
+                                                    Campo requerido!
+                                                </mat-error>
+                                            </mat-form-field>
+
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>Fecha Validez</mat-label>
+                                                <input type="date" matInput readonly
+                                                    [formControlName]="'fechaValidez'"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('fechaValidez'))">
+                                                <mat-error *ngIf="selectedRegistroForm.get('fechaValidez').hasError('required') && selectedRegistroForm.get('fechaValidez').touched">
+                                                    Campo requerido!
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>Fecha Renovación</mat-label>
+                                                <input type="date" matInput
+                                                    [formControlName]="'fechaRenovacion'"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('fechaRenovacion'))">
+                                                <mat-error *ngIf="selectedRegistroForm.get('fechaRenovacion').hasError('required') && selectedRegistroForm.get('fechaRenovacion').touched">
+                                                    Campo requerido!
+                                                </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>Fecha Cancelación</mat-label>
+                                                <input type="date" matInput readonly
+                                                    [formControlName]="'fechaCancelacion'">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>Número Pasaporte</mat-label>
+                                                <input placeholder="Ingresa Nº Pasaporte" matInput
+                                                    [formControlName]="'numeroPasaporte'"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('numeroPasaporte'))">
+                                                <mat-error *ngIf="selectedRegistroForm.get('numeroPasaporte').hasError('required') && selectedRegistroForm.get('numeroPasaporte').touched">
+                                                    Campo requerido!
+                                                </mat-error>
+                                            </mat-form-field>
+
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>Carnet Inmigración</mat-label>
+                                                <input placeholder="Ingresa Carnet"
+                                                    matInput
+                                                    formControlName="carnetInmigracion"
+                                                    (blur)="markAsTouched(selectedRegistroForm.get('carnetInmigracion'))">
+                                                <mat-error *ngIf="selectedRegistroForm.get('carnetInmigracion').hasError('required') && selectedRegistroForm.get('carnetInmigracion').touched">
+                                                    Campo requerido!
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <div class="flex flex-col w-full">
+                                                <span class="font-semibold mb-2">Examen Vista - Oido</span>
+                                                <mat-slide-toggle [formControlName]="'examenVistaOido'"
+                                                    [color]="'primary'">
+                                                    {{ selectedRegistroForm.get('examenVistaOido').value === true ?
+                                                    'Activo' : 'Inactivo' }}
+                                                </mat-slide-toggle>
+                                            </div>
+                                            <div class="flex flex-col w-full">
+                                                <span class="font-semibold mb-2">Examen Teorico - Practico</span>
+                                                <mat-slide-toggle [formControlName]="'examenTeoricoPractico'"
+                                                    [color]="'primary'">
+                                                    {{ selectedRegistroForm.get('examenTeoricoPractico').value === true
+                                                    ? 'Activo' : 'Inactivo' }}
+                                                </mat-slide-toggle>
+                                            </div>
+                                        </div>
+                                        
+
+                                    </div>
+                                </div>
+                               
+                            </div>
+
+                            <div class="flex items-center justify-between w-full border-t px-8 py-4">
+                                <div class="flex items-center">
+                                    <div class="flex items-center mr-4" *ngIf="flashMessage">
+
+                                        <ng-container *ngIf="flashMessage === 'success'">
+                                            <mat-icon class="text-green-500"
+                                                [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                            <span class="ml-2">Registro Actualizado</span>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="flashMessage === 'error'">
+                                            <mat-icon class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">Se ha producido un error, inténtelo de nuevo.</span>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="flashMessage === 'validacion'">
+                                            <mat-icon
+                                                class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">Campos incompletos.</span>
+                                        </ng-container>
+                                    </div>
+
+                                    <button mat-flat-button (click)="updateSelectedRegistro()" [color]="'primary'">
+                                        Actualizar
+                                    </button>
+                                    <button
+                                        mat-flat-button
+                                        type="button"
+                                        [color]="'red'">
+                                        Cancelar Registro 
+                                        (click)="updateSelectedRegistro()"
+                                        [color]="'primary'">
+                                    </button>
+                                    <button mat-flat-button (click)="updateSelectedRegistro()" [color]="'primary'">
+                                        Actualizar
+                                    </button>
+                                </div>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template #noRegistros>
+                <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">No hay Registros!
+                </div>
+            </ng-template>
+
+        </div>
+
+    </div>
+
+</div>

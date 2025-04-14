@@ -1,0 +1,206 @@
+<div class="relative">
+
+    <!-- Header -->
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+        
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">Agregar Dimensión</div>
+
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">          
+          <button mat-icon-button (click)="closeDialog()" class="close-button absolute top-0 right-0 p-2 bg-transparent border-none text-red-500 hover:text-red-700" color="warn">
+              <mat-icon>close</mat-icon>
+          </button>  
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden bg-gray-100 py-8 px-6 sm:px-8">
+
+        <!-- Lista -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto bg-white shadow-md rounded-lg p-6">
+
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Rellene los campos</h2>
+                
+                <form [formGroup]="dimensionForm" (ngSubmit)="addDimension()">
+                    
+                    <div class="flex">
+                        <mat-form-field class="w-1/6 pr-2">
+                            <mat-label>ID</mat-label>
+                            <input
+                                matInput
+                                [formControlName]="'dimension'" style="font-weight: bold; text-align: center;" readonly>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/6 pr-2">
+                            <mat-label>Cta Cte</mat-label>
+                            <input
+                                matInput
+                                [formControlName]="'ctaCte'" style="font-weight: bold; text-align: center;" readonly>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/3 pr-2">
+                          <mat-label>Posición</mat-label>
+                          <input placeholder="Posición" matInput readonly
+                            [formControlName]="'posicion'"
+                            pattern="^\d+(\.\d{1,2})?$"
+                            title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" (blur)="markAsTouched(dimensionForm.get('posicion'))">
+                            <mat-error *ngIf="dimensionForm.get('posicion').hasError('required') && dimensionForm.get('posicion').touched">
+                              Campo requerido!
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/6 pr-2">
+                          <mat-label>Borrado</mat-label>
+                          <input matInput [formControlName]="'borrado'" readonly>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/6 pr-2">
+                            <mat-label>Año</mat-label>
+                            <input matInput [formControlName]="'desdeAnio'" readonly>
+                        </mat-form-field>
+                    </div>
+                    <div class="flex">
+                        <mat-form-field class="w-1/4 pr-2">
+                            <mat-label>Área</mat-label>
+                            <input placeholder="Área" matInput 
+                              [formControlName]="'areaDimension'" 
+                              pattern="^\d+(\.\d{1,2})?$"
+                              title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" (blur)="markAsTouched(dimensionForm.get('areaDimension'))">
+                              <mat-error *ngIf="dimensionForm.get('areaDimension').hasError('required') && dimensionForm.get('areaDimension').touched">
+                                Campo requerido!
+                              </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/4 pr-2">
+                            <mat-label>Tramo Calle</mat-label>
+                            <input placeholder="Tramo" matInput 
+                              [formControlName]="'tramoCalle'"
+                              pattern="^\d+(\.\d{1,2})?$"
+                              title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" (blur)="markAsTouched(dimensionForm.get('tramoCalle'))">
+                              <mat-error *ngIf="dimensionForm.get('tramoCalle').hasError('required') && dimensionForm.get('tramoCalle').touched">
+                                Campo requerido!
+                              </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="w-2/4 pr-2">
+                          <mat-label>Observación</mat-label>
+                          <input matInput
+                              [formControlName]="'observacion'" (blur)="markAsTouched(dimensionForm.get('observacion'))"/>
+                              <mat-error *ngIf="dimensionForm.get('observacion').hasError('required') && dimensionForm.get('observacion').touched">
+                                Campo requerido!
+                              </mat-error>
+                      </mat-form-field>  
+                    </div>
+                    <div class="flex">
+                        <mat-form-field class="w-1/4 pr-2">
+                            <mat-label>Calle Principal</mat-label>
+                            <mat-select [formControlName]="'callePrincipal'" (blur)="markAsTouched(dimensionForm.get('callePrincipal'))">
+                              <mat-error *ngIf="dimensionForm.get('callePrincipal').hasError('required') && dimensionForm.get('callePrincipal').touched">
+                                Campo requerido!
+                              </mat-error>
+                              <ng-container *ngFor="let dp of callesPrincipales">
+                                <mat-option [value]="dp.id">
+                                  {{ dp.descripcion }}
+                                </mat-option>
+                              </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/4 pr-2">
+                            <mat-label>Calle</mat-label>
+                            <mat-select [formControlName]="'calle'" (blur)="markAsTouched(dimensionForm.get('calle'))">
+                              <mat-error *ngIf="dimensionForm.get('calle').hasError('required') && dimensionForm.get('calle').touched">
+                                Campo requerido!
+                              </mat-error>
+                              <ng-container *ngFor="let dp of calles">
+                                <mat-option [value]="dp.id">
+                                  {{ dp.descripcion }}
+                                </mat-option>
+                              </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/4 pr-2">
+                            <mat-label>Categoría Zona</mat-label>
+                            <mat-select [formControlName]="'categoriaZona'" (blur)="markAsTouched(dimensionForm.get('categoriaZona'))">
+                              <mat-error *ngIf="dimensionForm.get('categoriaZona').hasError('required') && dimensionForm.get('categoriaZona').touched">
+                                Campo requerido!
+                              </mat-error>
+                              <ng-container *ngFor="let dp of categoriasZonas">
+                                <mat-option [value]="dp.id">
+                                  {{ dp.descripcion }}
+                                </mat-option>
+                              </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/4 pr-2">
+                            <mat-label>Frentes</mat-label>
+                            <mat-select [formControlName]="'frentes'" (blur)="markAsTouched(dimensionForm.get('frentes'))">
+                              <mat-error *ngIf="dimensionForm.get('frentes').hasError('required') && dimensionForm.get('frentes').touched">
+                                Campo requerido!
+                              </mat-error>
+                              <ng-container *ngFor="let dp of frentes">
+                                <mat-option [value]="dp.id">
+                                  {{ dp.descripcion }}
+                                </mat-option>
+                              </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/4 pr-2">
+                            <mat-label>Orientaciones</mat-label>
+                            <mat-select [formControlName]="'orientacion'" (blur)="markAsTouched(dimensionForm.get('orientacion'))">
+                              <mat-error *ngIf="dimensionForm.get('orientacion').hasError('required') && dimensionForm.get('orientacion').touched">
+                                Campo requerido!
+                              </mat-error>
+                              <ng-container *ngFor="let dp of orientaciones">
+                                <mat-option [value]="dp.id">
+                                  {{ dp.descripcion }}
+                                </mat-option>
+                              </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="flex justify-end">
+                      <button mat-raised-button color="primary" type="submit" [disabled]="!dimensionForm.valid" >
+                          Agregar
+                      </button>
+                    </div>
+                  </form>
+                    <!-- Mostrar el array de construcciones -->
+                    <div *ngIf="dimensionArray.length > 0" class="mt-6">
+                      <h3 class="text-xl font-medium text-gray-800 mb-4">Dimensiones agregadas:</h3>
+
+                      <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                          <thead>
+                              <tr class="bg-gray-100">
+                                  <th class="px-4 py-2 text-left">Cuenta Cte</th>
+                                  <th class="px-4 py-2 text-left">Área</th>
+                                  <th class="px-4 py-2 text-left">Borrado</th>
+                                  <th class="px-4 py-2 text-left">Calle</th>
+                                  <th class="px-4 py-2 text-left">Calle Principal</th>
+                                  <th class="px-4 py-2 text-left">Año</th>
+                                  <th class="px-4 py-2 text-left">Frentes</th>
+                                  <th class="px-4 py-2 text-left">Observación</th>
+                                  <th class="px-4 py-2 text-left">Orientación</th>
+                                  <th class="px-4 py-2 text-left">Posición</th>
+                                  <th class="px-4 py-2 text-left">Tramo</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr *ngFor="let dimension of dimensionArray">
+                                  <td class="px-4 py-2 border-b">{{ dimension.ctaCte }}</td>
+                                  <td class="px-4 py-2 border-b">{{ dimension.areaDimension }}</td>
+                                  <td class="px-4 py-2 border-b">{{ dimension.borrado }}</td>
+                                  <td class="px-4 py-2 border-b">{{ dimension.calle }}</td>
+                                  <td class="px-4 py-2 border-b">{{ dimension.callePrincipal }}</td>
+                                  <td class="px-4 py-2 border-b">{{ dimension.desdeAnio }}</td>
+                                  <td class="px-4 py-2 border-b">{{ dimension.frentes }}</td>
+                                  <td class="px-4 py-2 border-b">{{ dimension.observacion }}</td>
+                                  <td class="px-4 py-2 border-b">{{ dimension.orientacion }}</td>
+                                  <td class="px-4 py-2 border-b">{{ dimension.posicion }}</td>
+                                  <td class="px-4 py-2 border-b">{{ dimension.tramoCalle }}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+                
+            </div>
+              
+        </div>
+
+    </div>
+
+</div>

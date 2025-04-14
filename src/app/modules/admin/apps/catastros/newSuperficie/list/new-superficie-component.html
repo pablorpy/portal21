@@ -1,0 +1,133 @@
+<div class="relative">
+
+    <!-- Header -->
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+        
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">Agregar Superficie</div>
+
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">          
+            <button mat-icon-button (click)="closeDialog()" class="close-button absolute top-0 right-0 p-2 bg-transparent border-none text-red-500 hover:text-red-700" color="warn">
+                <mat-icon>close</mat-icon>
+            </button>  
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden bg-gray-100 py-8 px-6 sm:px-8">
+
+        <!-- Lista -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto bg-white shadow-md rounded-lg p-6">
+
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Rellene los campos</h2>
+                
+                <form [formGroup]="superficieForm" (ngSubmit)="addSuperficie()">
+                    
+                    <div class="flex">
+                        <mat-form-field class="w-1/6 pr-2">
+                            <mat-label>ID</mat-label>
+                            <input
+                                matInput
+                                [formControlName]="'id'" style="font-weight: bold; text-align: center;" readonly>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/6 pr-2">
+                            <mat-label>Cta Cte</mat-label>
+                            <input
+                                matInput
+                                [formControlName]="'ctaCte'" style="font-weight: bold; text-align: center;" readonly>
+                        </mat-form-field>
+                    </div>
+                    <div class="flex">
+                        <mat-form-field class="w-1/6 pr-2">
+                            <mat-label>Posición</mat-label>
+                            <input placeholder="Posición" matInput readonly
+                              [formControlName]="'posicion'" #posicionInput
+                              pattern="^\d+(\.\d{1,2})?$"
+                              title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" (blur)="markAsTouched(superficieForm.get('posicion'))">
+                              <mat-error *ngIf="superficieForm.get('posicion').hasError('required') && superficieForm.get('posicion').touched">
+                                Campo requerido!
+                              </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/6 pr-2">
+                            <mat-label>Borrado</mat-label>
+                            <input matInput [formControlName]="'borrado'" readonly>
+                        </mat-form-field>
+                    </div>
+                    <div class="flex">
+                        <mat-form-field class="w-1/3 pr-2">
+                            <mat-label>Sub Zona</mat-label>
+                            <input placeholder="SubZona" matInput 
+                                [formControlName]="'subZona'" 
+                                #subZonaInput
+                                pattern="^\d+(\.\d{1,2})?$"
+                                title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" 
+                                (blur)="markAsTouched(superficieForm.get('subZona'))">
+                            <mat-error *ngIf="superficieForm.get('subZona').hasError('required') && superficieForm.get('subZona').touched">
+                                Campo requerido!
+                            </mat-error>
+                        </mat-form-field>
+                        
+                        <mat-form-field class="w-1/3 pr-2">
+                            <mat-label>Superficie Hectarea</mat-label>
+                            <input placeholder="superficieHa" matInput 
+                              [formControlName]="'superficieHa'"
+                              pattern="^\d+(\.\d{1,2})?$"
+                              title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" (blur)="markAsTouched(superficieForm.get('superficieHa'))">
+                              <mat-error *ngIf="superficieForm.get('superficieHa').hasError('required') && superficieForm.get('superficieHa').touched">
+                                Campo requerido!
+                              </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/3 pr-2">
+                            <mat-label>Sueprficie metros cuadrados</mat-label>
+                            <input placeholder="superficieM2" matInput 
+                              [formControlName]="'superficieM2'"
+                              pattern="^\d+(\.\d{1,2})?$"
+                              title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" (blur)="markAsTouched(superficieForm.get('superficieM2'))">
+                              <mat-error *ngIf="superficieForm.get('superficieM2').hasError('required') && superficieForm.get('superficieM2').touched">
+                                Campo requerido!
+                              </mat-error>
+                        </mat-form-field>
+                    </div> 
+                    <div class="flex justify-end">
+                        <button mat-raised-button color="primary" type="submit" [disabled]="!superficieForm.valid" class="ml-auto">
+                            Agregar
+                        </button>
+                    </div>  
+                </form>               
+                    <!-- Mostrar el array de construcciones -->
+                <div *ngIf="superficieArray.length > 0" class="mt-6">
+                        <h3 class="text-xl font-medium text-gray-800 mb-4">Superficies agregadas:</h3>
+
+                        <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="px-4 py-2 text-left">Cuenta Cte</th>
+                                    <th class="px-4 py-2 text-left">SubZona</th>
+                                    <th class="px-4 py-2 text-left">Sup. Ha</th>
+                                    <th class="px-4 py-2 text-left">Sup. M2</th>
+                                    <th class="px-4 py-2 text-left">Posición</th>
+                                    <th class="px-4 py-2 text-left">Borrado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let superficie of superficieArray">
+                                    <td class="px-4 py-2 border-b">{{ superficie.ctaCte }}</td>
+                                    <td class="px-4 py-2 border-b">{{ superficie.subZona }}</td>
+                                    <td class="px-4 py-2 border-b">{{ superficie.superficieHa }}</td>
+                                    <td class="px-4 py-2 border-b">{{ superficie.superficieM2 }}</td>
+                                    <td class="px-4 py-2 border-b">{{ superficie.posicion }}</td>
+                                    <td class="px-4 py-2 border-b">{{ superficie.borrado }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                </div>
+                
+                
+            </div>
+              
+        </div>
+
+    </div>
+
+</div>

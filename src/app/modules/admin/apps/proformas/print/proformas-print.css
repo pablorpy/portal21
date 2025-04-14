@@ -1,0 +1,96 @@
+
+.inset-0 {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.overflow-auto {
+    overflow: auto;
+}
+
+.print\\:overflow-visible {
+    overflow: visible !important;
+}
+
+.cdkScrollable {
+    max-height: 100vh; /* Ajusta el tamaño máximo según tu diseño */
+    overflow-y: auto;
+}
+  
+@media print {
+    .print-section {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #000;
+      background-color: #fff;
+      padding: 20px;
+    }
+  
+    .print-section .inventory-grid {
+      width: 100%;
+      border-collapse: collapse;
+    }
+  
+    .print-section .inventory-grid .col-span-8 {
+      width: 60%;
+    }
+  
+    .print-section .inventory-grid .col-span-2,
+    .print-section .inventory-grid .col-span-10 {
+      width: 20%;
+    }
+  
+    .print-section .inventory-grid .text-right {
+      text-align: right;
+    }
+  
+    .print-section .inventory-grid .text-center {
+      text-align: center;
+    }
+  
+    .print-section .inventory-grid .font-medium {
+      font-weight: 500;
+    }
+  
+    .print-section .inventory-grid .font-semibold {
+      font-weight: 600;
+    }
+  
+    .print-section .inventory-grid .border-b {
+      border-bottom: 1px solid #000;
+    }
+  
+    .print-section .inventory-grid .bg-gray-50 {
+      background-color: #f9fafb;
+    }
+  
+    .print-section .inventory-grid .py-4 {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+  
+    .print-section .inventory-grid .px-6 {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  
+    .print-section .inventory-grid .md\\:px-8 {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  
+    /* Ocultar elementos que no se deben imprimir */
+    .no-print {
+      display: none;
+    }
+  
+    /* Ajustar márgenes y relleno para la impresión */
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  }
+  

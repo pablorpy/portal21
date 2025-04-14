@@ -1,0 +1,236 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+
+    <!-- Header -->
+    <div
+        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">Liquidaciones</div>
+
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+
+            <!-- Búsqueda -->
+            <mat-form-field class="fuse-mat-dense fuse-mat-rounded min-w-64" [subscriptSizing]="'dynamic'">
+                <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+
+                <input
+                    matInput
+                    [autocomplete]="'off'"
+                    [placeholder]="'Buscar RUC'"
+                    (input)="filterByQuery(searchInput.value)"
+                    #searchInput type="text"
+                    (keypress)="validarNumerosGuion($event)"
+                >
+            </mat-form-field>
+            <button
+                class="ml-4 px-1 sm:px-4 min-w-10"
+                mat-flat-button [color]="'primary'" (click)="consultarCi(searchInput.value)">
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+                <span class="hidden sm:inline-block ml-2">Consultar</span>
+            </button>
+            
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <!-- Lista -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+             <!-- Siempre muestra las cabeceras -->
+            <div class="grid">
+                <div class="inventory-grid z-10 sticky top-0 grid grid-cols-8 gap-8 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-100 dark:bg-black dark:bg-opacity-5"
+                    matSort matSortDisableClear>
+                    <div class="hidden sm:block truncate text-rigth w-full" [mat-sort-header]="'id'">Código</div>
+                    <div class="hidden sm:block truncate col-span-2" [mat-sort-header]="'nombreContribuyente'">Contribuyente</div>
+                    <div class="hidden sm:block truncate text-center" [mat-sort-header]="'ruc'">RUC</div>
+                    <div class="hidden sm:block truncate text-center" [mat-sort-header]="'total'">Total</div>
+                    <div class="hidden sm:block truncate text-center" [mat-sort-header]="'fechaHoraCreacion'">Fecha Creación</div>
+                    <div class="hidden sm:block truncate text-center">Detalle</div>
+                    
+                </div>
+            </div>
+
+            <ng-container *ngIf="(liquidaciones$ | async) as liquidaciones">
+                <ng-container *ngIf="liquidaciones.length > 0; else noLiquidaciones">
+                    <div class="grid">
+                        <!-- Rows -->
+                        <ng-container *ngIf="(liquidaciones$ | async) as liquidaciones">
+                            <ng-container *ngFor="let liquidacion of liquidaciones; trackBy: trackByFn">
+                                <div
+                                    class="inventory-grid grid grid-cols-8 gap-4 py-3 px-6 md:px-8 border-b bg-gray-100">
+
+                                    <!-- Código -->
+                                    <div class="hidden sm:block truncate w-full" aria-readonly="">
+                                        {{liquidacion.id}}
+                                    </div>
+
+                                    <div class="hidden sm:block truncate col-span-2">
+                                        {{liquidacion.contribuyente?.nombre}} {{liquidacion.contribuyente?.apellido}}
+                                    </div>
+
+                                    <div class="hidden sm:block truncate">
+                                        {{liquidacion.ruc}}
+                                    </div>
+
+                                    <div class="hidden sm:block truncate">
+                                        {{liquidacion.total | guarani}}
+                                    </div>
+
+                                    <div class="hidden sm:block truncate">
+                                        {{liquidacion.fechaHoraCreacion}}
+                                    </div>
+                                    <!-- Botón de Detalles -->
+                                    <div class="flex justify-center items-center">
+                                        <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button
+                                            (click)="toggleDetails(liquidacion.id)">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="expandedRowId === liquidacion.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
+                                        </button>
+                                    </div>
+                                    
+                                </div>
+                                <!-- Detalles solo se muestran si la fila está expandida -->
+                                <div *ngIf="expandedRowId === liquidacion.id" class="grid">
+                                    <ng-container *ngIf="detalles.length > 0">
+                                        <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: detalles}"></ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator
+                        class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                        [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.length"
+                        [pageIndex]="pagination.page" [pageSize]="pagination.size" [pageSizeOptions]="[5, 10, 25, 100]"
+                        [showFirstLastButtons]="true">
+                    </mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <ng-template #rowDetailsTemplate let-detalles>
+                 <!-- Fila de encabezados -->
+                <div class="inventory-grid grid grid-cols-8 items-center gap-4 py-3 px-6 md:px-8 border-b bg-gray-100 font-bold">
+                    <div class="hidden sm:block truncate border-r border-gray-400 text-center">
+                        Código
+                    </div>
+                    <div class="hidden sm:block truncate border-r border-gray-400 text-center col-span-2">
+                        Concepto Primario
+                    </div>
+                    <div class="hidden sm:block truncate border-r border-gray-400 text-center">
+                        Costo
+                    </div>
+                    <div class="hidden sm:block truncate border-r border-gray-400 text-center col-span-2">
+                        Observación
+                    </div>
+                    <div class="text-center">
+                        Detalles
+                    </div>
+                    <div class="text-center">
+                        Imprimir
+                    </div>
+                </div>
+                <!-- Fila de datos -->
+                <ng-container *ngFor="let detalle of detalles; trackBy: trackByFn">
+                    <div
+                        class="inventory-grid grid grid-cols-8 items-center gap-4 py-3 px-6 md:px-8 border-b bg-gray-100">
+                        
+                        <!-- Código -->
+                        <div class="hidden sm:block truncate border-r border-gray-400 text-center" aria-readonly="">
+                            {{ detalle.id }}
+                        </div>
+
+                        <div class="hidden sm:block truncate border-r border-gray-400 col-span-2">
+                            {{ detalle.conceptoDescripcion }}
+                        </div>
+
+                        <div class="hidden sm:block truncate border-r border-gray-400 text-center">
+                            {{ detalle.costo | guarani}}
+                        </div>
+
+                        <div class="hidden sm:block truncate border-r border-gray-400 col-span-2">
+                            {{ detalle.observacion }}
+                        </div>
+
+                        <!-- Botón de Detalles -->
+                        <div class="flex justify-center items-center border-r border-gray-400">
+                            <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button
+                                (click)="toggleDetails_2(detalle.id)">
+                                <mat-icon class="icon-size-5"
+                                    [svgIcon]="expandedRowId_2 === detalle.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
+                            </button>
+                        </div>
+
+                        <div class="flex justify-center items-center ">
+                            <button mat-flat-button color="primary" >Imprimir</button>
+                        </div>
+                    </div>
+                    <!-- Detalles solo se muestran si la fila está expandida -->
+                    <div *ngIf="expandedRowId_2 === detalle.id" class="grid">
+                        <ng-container *ngIf="detalleDetalles.length > 0">
+                            <ng-container *ngTemplateOutlet="detalleDetalle; context: {$implicit: detalleDetalles}"></ng-container>
+                        </ng-container>
+                    </div>
+
+                </ng-container>
+            </ng-template>
+
+            <ng-template #detalleDetalle let-detalleDetalle>
+                 <!-- Fila de encabezados -->
+                 <div class="inventory-grid grid grid-cols-7 items-center gap-4 py-3 px-6 md:px-8 border-b bg-gray-0 font-bold">
+                    <div class="hidden sm:block truncate border-r border-gray-400 text-center">
+                        Código
+                    </div>
+                    <div class="hidden sm:block truncate border-r border-gray-400 text-center col-span-2">
+                        Concepto Secundario
+                    </div>
+                    <div class="hidden sm:block truncate border-r border-gray-100 text-center">
+                        Costo
+                    </div>
+                    <div class="hidden sm:block truncate border-r border-gray-400 text-center col-span-2">
+                        Observación
+                    </div>
+                    
+                </div>
+                <ng-container *ngFor="let detalleDetalle of detalleDetalles; trackBy: trackByFn">
+                    <div
+                        class="inventory-grid grid grid-cols-7 items-center gap-4 py-3 px-6 md:px-8 border-b bg-gray-0">
+                        <!-- Código -->
+                        <div class="hidden sm:block truncate border-r border-gray-400 text-center" aria-readonly="">
+                            {{ detalleDetalle.id }}
+                        </div>
+
+                        <div class="hidden sm:block truncate border-r border-gray-400 col-span-2">
+                            {{ detalleDetalle.conceptoAccesorioDescripcion }}
+                        </div>
+
+                        <div class="hidden sm:block truncate border-r border-gray-400 text-center">
+                            {{ detalleDetalle.costo | guarani}}
+                        </div>
+
+                        <div class="hidden sm:block truncate border-r border-gray-400 col-span-2">
+                            {{ detalleDetalle.observacion }}
+                        </div>
+                        
+                    </div>
+                </ng-container>
+            </ng-template>
+
+            
+
+        </div>
+        <ng-template #noLiquidaciones>
+            <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">No hay liquidaciones!
+            </div>
+        </ng-template>
+    </div>
+
+</div>

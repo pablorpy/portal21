@@ -1,0 +1,129 @@
+<div class="flex flex-col max-w-240 md:min-w-160 max-h-screen -m-6">
+
+    <!-- Header -->
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="ml-3 text-2xl font-semibold tracking-tight text-white">Financiamiento de Impuestos Inmobiliarios</div>
+        <button
+            mat-icon-button
+            (click)="cerrarDialog()"
+            [tabIndex]="-1">
+            <mat-icon
+                class="text-current"
+                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Compose form -->
+    <form
+        class="flex flex-col flex-auto p-6 sm:p-4 overflow-y-auto"
+        [formGroup]="finanImpuestoInmForm">
+
+        <div class="flex flex-row p-0 font-extrabold text-lg text-orange-500">Total a Financiar: {{montoTotalAPagar | currency:'PYG':'symbol-narrow':'.0-0':'py'}}</div>
+        
+                
+        
+
+        <!-- To -->
+        <mat-form-field class="flex">
+            <mat-label>Importe a entregar:</mat-label>
+            <input
+                matInput
+                [formControlName]="'importeEntrega'"
+                (blur)="onImporteEntregaChange()">
+            <div
+                class="copy-fields-toggles"
+                matSuffix>
+                
+               
+            </div>
+        </mat-form-field>
+        <mat-form-field class="flex">
+            <mat-label>Cantidad de Cuotas:</mat-label>
+            <mat-select [formControlName]="'cantidadCuotas'" (ngModelChange)="showCopyField('cc')">
+                <ng-container *ngFor="let x of cuotas">
+                    <mat-option [value]="x" *ngIf="x>1">
+                        {{x}}
+                    </mat-option>
+                </ng-container>
+            </mat-select>
+        </mat-form-field>
+        <div class="flex flex-row pl-30 pr-30 font-extrabold text-lg">
+            <button
+                class="px-1 sm:px-2 min-w-10 lg:w-full p-3"
+                mat-flat-button
+                [color]="'accent'"
+                (click)="showCopyField('cc')"
+                >
+                <mat-icon
+                    class="icon-size-5"
+                    [svgIcon]="'heroicons_outline:table-cells'"></mat-icon>
+                <span class="hidden sm:inline-block ml-2">Calcular Importe de Cuotas</span>
+            </button>
+                    
+        </div>
+        <!-- <span
+                    class="text-sm font-medium cursor-pointer select-none hover:underline"
+                    
+                    (click)="showCopyField('cc')">
+                    Calcular Importe de Cuotas
+                </span>
+                 -->
+        <!-- Cc -->
+
+            <!-- <input
+                matInput
+                [formControlName]="'importeCuota'"> -->
+                <div *ngIf="montoCuota !== null" class="flex flex-row font-extrabold text-lg text-orange-500 ">Detalle de cuotas:</div>
+                <div *ngIf="montoCuota !== null" class="flex-0 flex-row text-lg">
+                    <ul>
+                      <li>Cuota 1: {{getImporteEntrega() | currency:'PYG':'symbol-narrow':'.0-0':'py'}} (Entrega)</li>
+                      <li *ngFor="let cuota of [].constructor(getCantCuotasSeleccionadas()-1); let i = index">Cuota {{ i +2 }}: {{ montoCuota | currency:'PYG':'symbol-narrow':'.0-0':'py'}}, Vence: {{getCalcularVencimiento(i+1)}}</li>
+                    </ul>
+                    <!-- <p *ngIf="montoCuota !== null">Monto por cuota: {{ montoCuota | currency }}</p> -->
+                  </div>
+        
+
+        
+
+        
+        <!-- Body -->
+        <quill-editor 
+            class="mt-2"
+            [formControlName]="'observaciones'"
+            [bounds]="'self'"
+            placeholder="Observaciones"
+            [modules]="quillModules"></quill-editor>
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mt-4 sm:mt-6">
+            <div class="-ml-2">
+                <!-- Discard -->
+                <button
+                    class="ml-auto sm:ml-0"
+                    mat-stroked-button
+                    (click)="cerrarDialog()">
+                    Descartar
+                </button>
+            </div>
+
+            <div class="flex items-center mt-4 sm:mt-0 -ml-2">
+                
+                <!-- Save as draft -->
+                <!-- <button
+                    class="sm:mx-3"
+                    mat-stroked-button
+                    (click)="saveAsDraft()">
+                    <span>Guardar como borrador</span>
+                </button> -->
+                <!-- Send -->
+                <button
+                    class="order-first sm:order-last"
+                    mat-flat-button
+                    [color]="'primary'"
+                    (click)="saveAndClose()">
+                    Enviar para Liquidación
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

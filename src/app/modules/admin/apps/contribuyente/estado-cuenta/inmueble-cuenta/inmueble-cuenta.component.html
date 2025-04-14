@@ -1,0 +1,142 @@
+<div class="flex flex-col max-w-240 md:min-w-160 max-h-screen -m-6">
+
+    <!-- Header -->
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-white">
+        <div class="text-lg font-medium">Cuentas del Inmueble</div>
+        <button
+            mat-icon-button
+            matDialogClose
+            (click)="saveAndClose()"
+            [tabIndex]="-1">
+            <mat-icon
+                class="text-current"
+                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+        </button>
+    </div>
+    <ng-container *ngIf="(inmueble$ | async) as inm">
+        <!-- Image -->
+      <!--   <ng-container *ngIf= inm.image">
+            <div class="relative w-full">
+                <div class="absolute right-0 bottom-0 p-4">
+                    <button
+                        mat-icon-button
+                        (click)="removeImage inm)">
+                        <mat-icon
+                            class="text-white"
+                            [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                    </button>
+                </div>
+                <img
+                    class="w-full object-cover"
+                    [src]= inm.image">
+            </div>
+        </ng-container> -->
+        <div class="m-4">
+            <!-- Title -->
+            <div>
+                <input readonly
+                    class="w-full p-2 text-2xl"
+                    [placeholder]="'Datos del Inmueble'">
+            </div>
+            <!-- inm -->
+            <div class="flex w-full py-2 px-2">
+                <ng-container *ngIf="inm.ctaCorrientePadron">
+                    <div [class.text-xl]="true" class="font-semibold line-clamp-3">
+                        <span [ngClass]="'text-lg font-medium text-green-600 dark:text-green-500'">Cuenta Cte/ Padrón:</span> {{inm.ctaCorrientePadron}}
+                    </div>
+                </ng-container>
+            </div>
+            <!-- inm -->
+            <div class="flex w-full py-2 px-2">    
+                <!-- Content -->
+                <ng-container *ngIf="inm.direccionInmueble">
+                    <div [class.text-xl]="inm.direccionInmueble.length < 70">
+                        <span [ngClass]="'text-lg font-medium text-green-600 dark:text-green-500'">Dirección:</span> {{inm.direccionInmueble}}
+                    </div>
+                </ng-container>
+            </div>
+            <!-- Tasks -->
+            <ng-container *ngIf="(cuentasInmueble$ | async) as ctas">
+                <div>
+                    <input readonly
+                        class="w-full p-2 text-2xl"
+                        [placeholder]="'Detalle de Cuentas del Inmueble:'">
+                </div>
+                <div class="mx-2 mt-4 space-y-1.5">
+                    <ng-container *ngFor="let det of ctas; trackBy: trackByFn">
+                        <div class="group flex items-center">
+                            <mat-checkbox
+                                class="flex items-center"
+                                [color]="'primary'"
+                               
+                                (change)="agregarCuentaAProforma(det)">
+                                <ng-container *ngIf="det.anho">
+                                    <div [class.text-xl]="true" class="font-semibold line-clamp-3">
+                                        Año:<span [ngClass]="'text-lg font-medium text-red-600 dark:text-red-500'"> {{det.anho}} </span> => 
+
+                                        Monto a Pagar:<span [ngClass]="'text-lg font-medium text-red-600 dark:text-red-500'"> {{det.totalPagar}} </span>
+                                    </div>
+                                </ng-container>
+                            
+                            </mat-checkbox>
+                            
+                            
+                        </div>
+                    </ng-container>
+                    <!-- <div class="flex items-center">
+                        <mat-icon
+                            class="-ml-0.5 icon-size-5 text-hint"
+                            [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                        <input
+                            class="w-full ml-1.5 px-1 py-0.5"
+                            [placeholder]="'Add task'"
+                            (keydown.enter)="addTaskT inm, newTaskInput.value); newTaskInput.value = ''"
+                            #newTaskInput>
+                    </div> -->
+                </div>
+            </ng-container>
+            <!-- Labels -->
+            <!-- <ng-container *ngIf= inm.labels && inm.labels.length">
+                <div class="flex flex-wrap items-center mx-1 mt-6">
+                    <ng-container *ngFor="let label of inm.labels; trackBy: trackByFn">
+                        <div class="flex items-center m-1 py-0.5 px-3 rounded-full text-sm font-medium text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700">
+                            <div>
+                                {{label.title}}
+                            </div>
+                            <mat-icon
+                                class="ml-1 icon-size-4 cursor-pointer"
+                                [svgIcon]="'heroicons_solid:x-circle'"
+                                (click)="toggleLabelO inm, label)"></mat-icon>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container> -->
+            <!-- Add Actions -->
+            <!-- ng-container *ngIf=" inm.id">
+                <div class="flex items-center justify-end mt-4">
+                    
+                    <button
+                        mat-flat-button
+                        [color]="'primary'"
+                        [disabled]=" inm.title &&  inm.content"
+                        (click)="creat inm)">
+                        Save
+                    </button>
+                </div>
+            </ng-contain -->
+            <!-- Edit Actions -->
+            <ng-container *ngIf="inm.id">
+                <div class="flex flex-0 items-center justify-between mt-4">
+                    <div class="text-lg font-medium"></div>
+                    <!-- Close -->
+                    <button
+                        mat-flat-button
+                        matDialogClose>
+                        Cerrar
+                    </button>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+
+</div>

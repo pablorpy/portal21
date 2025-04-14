@@ -1,0 +1,210 @@
+<div
+    class="settings-cog fixed flex items-center justify-center right-0 w-10 h-30 shadow-lg rounded-l-lg z-90 cursor-pointer bg-primary-600 bg-opacity-90 print:hidden"
+    [class.lg:right-0]="config.layout === 'centered' || config.layout === 'material'"
+    [class.lg:right-16]="config.layout !== 'centered' && config.layout !== 'material'"
+    style="top: 300px"
+    (click)="settingsDrawer.toggle()">
+    <mat-icon
+        class="icon-size-5 text-white animate-spin-slow"
+        [svgIcon]="'heroicons_solid:cog-8-tooth'"></mat-icon>
+</div>
+
+<fuse-drawer
+    class="w-screen min-w-screen sm:w-200 sm:min-w-200 z-999"
+    fixed
+    [mode]="'over'"
+    [name]="'settingsDrawer'"
+    [position]="'right'"
+    #settingsDrawer>
+
+    
+
+    <div class="flex flex-col w-full overflow-auto bg-card">
+        <div class="flex flex-row items-center px-6 h-15 min-h-35 text-white bg-transparent"></div>
+        <div class="flex flex-row items-center px-6 h-20 min-h-35 text-white bg-primary">
+            <mat-icon
+                class="icon-size-7 text-current"
+                [svgIcon]="'heroicons_solid:currency-dollar'"></mat-icon>
+            <div class="ml-3 text-2xl font-semibold tracking-tight">RESUMEN A PAGAR</div>
+            <button
+                class="ml-auto"
+                mat-icon-button
+                (click)="settingsDrawer.close()">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+            </button>
+        </div>
+        <div class="flex flex-row p-2 font-extrabold text-lg text-orange-500">TOTAL A PAGAR: {{montoTotalAPagar | currency:'PYG':'symbol-narrow':'.0-0':'py'}}</div>
+        
+        <div class="flex flex-col p-2 ">
+            <!-- Theme -->
+            <div class="text-md font-medium text-secondary">INMUEBLES</div>
+                <div class="flex flex-row p-0">
+                    <div class="grid grid-cols-6 sm:grid-cols-6 gap-3 mt-6">
+                        <div class="flex items-center justify-right px-4 py-0 cursor-pointer ring-inset ring-primary bg-hover font-semibold line-clamp-3">Cta. Cte.</div>
+                        <div class="flex items-center justify-center px-4 py-0 cursor-pointer ring-inset ring-primary bg-hover font-semibold line-clamp-3">Año</div>
+                        <div class="flex items-center justify-center px-4 py-0 cursor-pointer ring-inset ring-primary bg-hover font-semibold line-clamp-3">Deuda</div>
+                        <div class="flex items-center justify-center px-4 py-0 cursor-pointer ring-inset ring-primary bg-hover font-semibold line-clamp-3">Dcto. %</div>
+                        <div class="flex items-center justify-center px-4 py-0 cursor-pointer ring-inset ring-primary bg-hover font-semibold line-clamp-3">Dcto. Gs.</div>
+                        <div class="flex items-center justify-center px-4 py-0 cursor-pointer ring-inset ring-primary bg-hover font-semibold line-clamp-3">Pagar. Gs.</div>
+                    </div>
+                </div>
+                <div class="flex p-2 justify-text-right flex-row-right">
+                    <div class="grid grid-cols-6 sm:grid-cols-6 gap-0 mt-0" >
+                        <ng-container *ngFor="let det of proformaCargaDetalles; let i = index; trackBy: trackByFn">
+                            <div class="flex items-center justify-right px-0 py-0 font-semibold">
+                            <span [ngClass]="'flex flex-row-right text-md font-medium text-red-600 dark:text-red-500'">{{det.cuentaInmueble.inmueble.ctaCorrientePadron}}</span></div>
+                            <div class="flex right-0 flex-row-right items-center  pl-2 py-0 font-semibold">
+                            <span [ngClass]="'flex text-right text-md font-medium text-red-600 dark:text-red-500 pl-4'" >{{det.cuentaInmueble.anho}}</span></div>
+                            <div class="flex right-0 flex-row-right items-center  px-2 py-0 font-semibold">
+                            <span [ngClass]="'flex flex-row-right text-md font-medium text-red-600 dark:text-red-500 pl-4'">{{det.cuentaInmueble.totalPagar | currency:'PYG':'symbol-narrow':'.0-0':'py'}}</span></div>
+                            
+                            <div class="flex items-center justify-right px-4 py-0 font-semibold pl-12">
+                                <!-- <mat-form-field > -->
+                                    <input maxlength="3" [size]="'1'"
+                                        matInput (change)="calcularDctoMontoAPagar(descuentoInput, det)"
+                                        [placeholder]="'%'"
+                                        [ariaValueMax]="'100'"
+                                        [ariaValueMin]="'0'"
+                                        #descuentoInput
+                                        [value]="det.porcentajeDescuento"
+                                        >
+                                    <!-- <mat-icon
+                                        class="icon-size-5"
+                                        matPrefix
+                                        [svgIcon]="'heroicons_solid:receipt-percent'"></mat-icon> -->
+                                <!-- </mat-form-field> -->
+                            </div>
+                            <div class="flex items-center justify-right px-4 py-0 font-semibold">
+                                <span [ngClass]="'flex flex-row-right text-md font-medium text-red-600 dark:text-red-500 pl-0'">{{det.montoDescuento | currency: 'PYG':'symbol-narrow':'.0-0':'py' }}</span></div>
+                                <div class="flex items-center justify-right px-4 py-0 font-semibold">
+                                <span [ngClass]="'flex flex-row-right text-md font-medium text-red-600 dark:text-red-500 pl-0'">{{det.montoAPagar | currency: 'PYG':'symbol-narrow':'.0-0':'py'}}</span></div>
+                        </ng-container>
+                    </div>
+                    
+                </div>
+
+                <div class="flex flex-row pl-80 pr-80 font-extrabold text-lg">
+                    <button
+                        class="px-1 sm:px-2 min-w-10 lg:w-full p-3"
+                        mat-flat-button
+                        [color]="'accent'"
+                        (click)="toggleFinanciarImpuestosInm(true)"
+                        >
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_outline:table-cells'"></mat-icon>
+                        <span class="hidden sm:inline-block ml-2">Financiar</span>
+                    </button>
+                    <!-- <button
+                        class="mx-6"
+                        mat-flat-button
+                        [color]="'primary'"
+                        (click)="openComposeDialog()">
+                        <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                        <span class="ml-2">Compose</span>
+                    </button> -->
+                </div>
+            <!-- <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-6"> -->
+                <!-- <div class="flex flex-col p-6 pr-20"> -->
+
+                
+
+            <!-- </div> -->
+
+            <hr class="my-8">
+
+            <!-- Scheme -->
+            <div class="text-md font-semibold text-secondary">REGISTROS</div>
+
+            <div class="flex p-2 justify-text-right flex-row-right">
+                <div class="grid grid-cols-6 sm:grid-cols-6 gap-3 mt-0" >  
+                    <ng-container *ngFor="let det of proformaCargaDetalles; let i = index; trackBy: trackByFn">
+                    
+                        <!-- <div [class.text-sm]="true" class="font-semibold ">
+                            Cta.Cte: <span [ngClass]="'text-sm font-medium text-red-600 dark:text-red-500'"> {{det.cuentaInmueble.inmueble.ctaCorrientePadron}} </span> |
+                            Año:<span [ngClass]="'text-sm font-medium text-red-600 dark:text-red-500'"> {{det.cuentaInmueble.anho }} </span> | 
+    
+                            Deuda:<span [ngClass]="'text-sm font-medium text-red-600 dark:text-red-500'"> {{det.cuentaInmueble.totalPagar | currency: 'PYG':'symbol-narrow':'.0-0':'py' }}</span> |
+                            % Dcto:<span [ngClass]="'text-sm font-medium text-red-600 dark:text-red-500'"> <input (ngModel)="det.porcentajeDescuento" ></span>
+                            Dcto:<span [ngClass]="'text-sm font-medium text-red-600 dark:text-red-500'"> {{det.montoDescuento | currency: 'PYG':'symbol-narrow':'.0-0':'py' }}</span>
+                            A Pagar:<span [ngClass]="'text-sm font-medium text-red-600 dark:text-red-500'"> {{det.montoAPagar | currency: 'PYG':'symbol-narrow':'.0-0':'py' }}</span>
+                            
+                        </div> -->
+                    </ng-container>
+                </div>
+            </div>
+                    
+            <!-- <div class="grid grid-cols-3 gap-3 justify-items-start mt-6"> -->
+                <!-- Auto -->
+                <!-- <div
+                    class="flex items-center py-3 pl-5 pr-6 rounded-full cursor-pointer ring-inset ring-primary bg-hover"
+                    [class.ring-2]="config.scheme === 'auto'"
+                    matTooltip="Automatically sets the scheme based on user's operating system's color scheme preference using 'prefer-color-scheme' media query."
+                    (click)="setScheme('auto')">
+                    <div class="flex items-center rounded-full overflow-hidden">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:bolt'"></mat-icon>
+                    </div>
+                    <div
+                        class="flex items-center ml-2 font-medium leading-5"
+                        [class.text-secondary]="config.scheme !== 'auto'">
+                        Auto
+                    </div>
+                </div> -->
+                <!-- Dark -->
+                <!-- <div
+                    class="flex items-center py-3 pl-5 pr-6 rounded-full cursor-pointer ring-inset ring-primary bg-hover"
+                    [class.ring-2]="config.scheme === 'dark'"
+                    (click)="setScheme('dark')">
+                    <div class="flex items-center rounded-full overflow-hidden">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:moon'"></mat-icon>
+                    </div>
+                    <div
+                        class="flex items-center ml-2 font-medium leading-5"
+                        [class.text-secondary]="config.scheme !== 'dark'">
+                        Dark
+                    </div>
+                </div> -->
+                <!-- Light -->
+                <!-- <div
+                    class="flex items-center py-3 pl-5 pr-6 rounded-full cursor-pointer ring-inset ring-primary bg-hover"
+                    [class.ring-2]="config.scheme === 'light'"
+                    (click)="setScheme('light')">
+                    <div class="flex items-center rounded-full overflow-hidden">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:sun'"></mat-icon>
+                    </div>
+                    <div
+                        class="flex items-center ml-2 font-medium leading-5"
+                        [class.text-secondary]="config.scheme !== 'light'">
+                        Light
+                    </div>
+                </div> -->
+            <!-- </div> -->
+
+            <hr class="my-8">
+
+
+        </div>
+        <div class="flex flex-row pl-80 pr-80 font-extrabold text-lg">
+            <button
+                class="px-1 sm:px-2 min-w-10 lg:w-full p-3"
+                mat-flat-button
+                [color]="'primary'"
+                (click)="insertarProforma()"
+                >
+                <mat-icon
+                    class="icon-size-5"
+                    [svgIcon]="'heroicons_outline:cloud-arrow-down'"></mat-icon>
+                <span class="hidden sm:inline-block ml-2">Guardar</span>
+            </button>
+        </div>
+    </div>
+
+</fuse-drawer>

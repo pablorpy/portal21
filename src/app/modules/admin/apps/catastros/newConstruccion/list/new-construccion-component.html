@@ -1,0 +1,121 @@
+<div class="relative">
+
+    <!-- Header -->
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+        
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">Agregar Construcción</div>
+
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">          
+            <button mat-icon-button (click)="closeDialog()" class="close-button absolute top-0 right-0 p-2 bg-transparent border-none text-red-500 hover:text-red-700" color="warn">
+                <mat-icon>close</mat-icon>
+            </button>  
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden bg-gray-100 py-8 px-6 sm:px-8">
+
+        <!-- Lista de Dominios -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto bg-white shadow-md rounded-lg p-6">
+
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Rellene los campos</h2>
+                
+                <form [formGroup]="construccionForm" (ngSubmit)="addConstruccion()">
+                    
+                    <div class="flex">
+                        <mat-form-field class="w-1/4 pr-2" >
+                            <mat-label>Código</mat-label>
+                            <input matInput [formControlName]="'nroFilaConstruccion'" style="color: red;" readonly>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/4 pr-2">
+                            <mat-label>Cta Cte</mat-label>
+                            <input matInput [formControlName]="'ctaCte'" readonly>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/4 pr-2">
+                            <mat-label>Año de Construcción</mat-label>
+                            <input placeholder="Ingresa campo" matInput [formControlName]="'anioConstruccion'" readonly>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/4 pr-2">
+                            <mat-label>Borrado</mat-label>
+                            <input matInput [formControlName]="'borrado'" readonly>
+                        </mat-form-field>
+                    </div>
+                    <div class="flex">
+                        <!-- Categoría de construcción -->
+                        <mat-form-field class="w-1/5 pr-2">
+                            <mat-label class="text-gray-700">Categoría de construcción</mat-label>
+                            <mat-select formControlName="categoriaConstruccion" required class="w-full" autofocus >
+                                <mat-option *ngFor="let categoria of categoriaConstrucciones" [value]="categoria.id">
+                                    {{ categoria.descripcion }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                         <!-- Tipo de construcción -->
+                         <mat-form-field class="w-1/5 pr-2">
+                            <mat-label class="text-gray-700">Tipo de construcción</mat-label>
+                            <mat-select formControlName="tipoConstruccion" required class="w-full">
+                                <mat-option *ngFor="let tipo of tipoConstrucciones" [value]="tipo.id">
+                                    {{ tipo.descripcion }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="w-1/5 pr-2">
+                            <mat-label>Área</mat-label>
+                            <input placeholder="Área" matInput 
+                              [formControlName]="'area'"
+                              pattern="^\d+(\.\d{1,2})?$"
+                              title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" >
+                        </mat-form-field>
+                        <mat-form-field class="w-2/5 pr-2">
+                            <mat-label>Observaciones</mat-label>
+                            <input placeholder="Ingresa campo" matInput [formControlName]="'obs'">
+                        </mat-form-field>
+                    </div>
+                    <!-- Botón para agregar la construcción -->
+                    <div class="flex justify-end">
+                        <button mat-raised-button color="primary" type="submit" [disabled]="!construccionForm.valid" >
+                            Agregar
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Mostrar el array de construcciones -->
+                <div *ngIf="construccionArray.length > 0" class="mt-6">
+                    <h3 class="text-xl font-medium text-gray-800 mb-4">Construcciones agregadas:</h3>
+
+                    <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="px-4 py-2 text-left">Cuenta Cte</th>
+                                <th class="px-4 py-2 text-left">Año</th>
+                                <th class="px-4 py-2 text-left">Categoria</th>
+                                <th class="px-4 py-2 text-left">Tipo</th>
+                                <th class="px-4 py-2 text-left">Área</th>
+                                <th class="px-4 py-2 text-left">Borrado</th>
+                                <th class="px-4 py-2 text-left">Observación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let construccion of construccionArray">
+                                <td class="px-4 py-2 border-b">{{ construccion.ctaCte }}</td>
+                                <td class="px-4 py-2 border-b">{{ construccion.anioConstruccion }}</td>
+                                <td class="px-4 py-2 border-b">{{ construccion.categoriaConstruccion }}</td>
+                                <td class="px-4 py-2 border-b">{{ construccion.tipoConstruccion }}</td>
+                                <td class="px-4 py-2 border-b">{{ construccion.area }}</td>
+                                <td class="px-4 py-2 border-b">{{ construccion.borrado }}</td>
+                                <td class="px-4 py-2 border-b">{{ construccion.obs }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+              
+        </div>
+
+    </div>
+
+</div>

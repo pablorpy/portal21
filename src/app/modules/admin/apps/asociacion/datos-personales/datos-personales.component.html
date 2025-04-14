@@ -1,0 +1,547 @@
+<div class="flex flex-col flex-auto min-w-0">
+
+    <!-- Header -->
+    <div class="bg-card">
+        <div class="flex flex-col w-full max-w-screen-xl mx-auto px-6 sm:px-8">
+            <div class="flex flex-col sm:flex-row flex-auto sm:items-center min-w-0 my-8 sm:my-12">
+                <!-- Avatar and name -->
+                <div class="flex flex-auto items-center min-w-0">
+                    <div class="flex-0 w-16 h-16 rounded-full overflow-hidden">
+                        <img
+                            class="w-full h-full object-cover"
+                            src="assets/images/logo/coop21-logo-nuevo.png">
+                    </div>
+                    <div class="flex flex-col min-w-0 ml-4">
+                        <ng-container *transloco="let t">
+                            <div class="text-2xl md:text-5xl font-semibold tracking-tight leading-7 md:leading-snug truncate">{{t('welcome')}}, llena tu solicitud!</div>
+                        </ng-container>
+                        <div class="flex items-center">
+                            <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'heroicons_solid:bell'"></mat-icon>
+                            <div class="ml-1.5 leading-6 truncate text-secondary">Tienes datos que debes cargar antes de finalizar tu solicitud</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Actions -->
+                <div class="flex items-center mt-6 sm:mt-0 sm:ml-2 space-x-3">
+                    <button
+                        class="bg-accent"
+                        mat-flat-button
+                        [color]="'accent'">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
+                        <span class="ml-2">Mensajes</span>
+                    </button>
+                    <button
+                        mat-flat-button
+                        [color]="'primary'">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:cog-8-tooth'"></mat-icon>
+                        <span class="ml-2">Configuración</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Project selector -->
+            <div
+                class="relative flex self-start pt-2 pb-1 pl-5 pr-4 cursor-pointer overflow-hidden rounded-t-xl border border-b-0 bg-default"
+                matRipple
+                [matMenuTriggerFor]="projectsMenu">
+                <div class="flex items-center">
+                    <div class="overflow-hidden">
+                        <div class="font-medium leading-6 truncate">{{selectedProject}}</div>
+                    </div>
+                    <div class="flex items-center justify-center pl-2">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_mini:chevron-down'"></mat-icon>
+                    </div>
+                </div>
+                <mat-menu
+                    #projectsMenu="matMenu"
+                    [xPosition]="'before'">
+                    <button
+                        mat-menu-item
+                        (click)="selectedProject='Solicitud de Asociación'">Solicitud de Asociación
+                    </button>
+                    <button
+                        mat-menu-item
+                        (click)="selectedProject='Consulta de Saldos'">Consulta de Saldos
+                    </button>
+                    <button
+                        mat-menu-item
+                        (click)="selectedProject='Créditos'">Créditos
+                    </button>
+                    <button
+                        mat-menu-item
+                        (click)="selectedProject='Ahorros'">Ahorros
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex-auto border-t -mt-px pt-4 sm:pt-6">
+        <div class="w-full max-w-screen-xl mx-auto">
+            <!-- Tabs -->
+            <mat-tab-group
+                class="sm:px-2"
+                mat-stretch-tabs="false"
+                [animationDuration]="'0'">
+
+                <!-- Team -->
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <span class="inline-flex items-center space-x-2">
+                            <span class="">Carga de Datos Personales</span>
+                            <span class="px-2 py-1 text-sm rounded-full bg-primary-100 text-on-primary-100">*</span>
+                        </span>
+                    </ng-template>
+                    <ng-template matTabContent>
+                        
+                            <!-- Datos personales -->
+                            <div class="mt-0 mb-8 text-3xl font-bold">Datos personales</div>
+
+                            <form
+                                class="p-4 bg-card shadow rounded overflow-hidden"
+                                [formGroup]="horizontalStepperForm">
+                                <mat-horizontal-stepper
+                                    [linear]="true"
+                                    #horizontalStepper>
+                                    <mat-step
+                                        [formGroupName]="'step1'"
+                                        [stepControl]="horizontalStepperForm.get('step1')"
+                                        #horizontalStepperStep1>
+                                        <ng-template matStepLabel>Información Personal</ng-template>
+                                        <p class="my-6 font-medium">
+                                            Completa tus datos personales
+                                        </p>
+                                        
+                                        <div class="flex">
+                                            <mat-form-field class="flex-auto">
+                                                <mat-select
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Tipo de Documento'"
+                                                    required>
+                                                    <mat-option value="country-1">Cédula de Identidad</mat-option>
+                                                    <mat-option value="country-2">RUC</mat-option>
+                                                    <mat-option value="country-3">Pasaporte</mat-option>
+                                                </mat-select>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                            </mat-form-field>
+                                            &nbsp;
+                                            <mat-form-field class="flex-col flex-auto">
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Nro. de documento'"
+                                                    required>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                                            </mat-form-field>
+                                            &nbsp;
+                                            <mat-form-field class="flex-col -space-x-1 gt-xs:pr-3">
+                                                <mat-select
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Es Contribuyente'"
+                                                    required>
+                                                    <mat-option value="country-1">Si</mat-option>
+                                                    <mat-option value="country-2">No</mat-option>
+                                                </mat-select>
+                                                <mat-icon
+                                                class="icon-size-5"
+                                                matPrefix
+                                                [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                            </mat-form-field>
+                                            &nbsp;
+                                            <mat-form-field class="flex-auto">
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'RUC'"
+                                                    required>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex ">
+                                            <mat-form-field class="flex-auto gt-xs:pr-3">
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Apellidos'"
+                                                    required>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                            </mat-form-field>
+                                            &nbsp;
+                                            <mat-form-field class="flex-auto gt-xs:pr-3">
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Nombres'"
+                                                    required>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            
+                                            <mat-form-field class="flex-auto">
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Fecha Nac.'"
+                                                    required>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:calendar-days'"></mat-icon>
+                                            </mat-form-field>
+                                            &nbsp;
+                                            <mat-form-field class="flex-auto gt-xs:pr-3">
+                                                <mat-select
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Sexo'"
+                                                    required>
+                                                    <mat-option value="country-1">Masculino</mat-option>
+                                                    <mat-option value="country-2">Femenino</mat-option>
+                                                </mat-select>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                            </mat-form-field>
+                                            
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="flex-auto gt-xs:pr-3">
+                                                <mat-select
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Estado Civil'"
+                                                    required>
+                                                    <mat-option value="country-1">Casado</mat-option>
+                                                    <mat-option value="country-2">Soltero</mat-option>
+                                                </mat-select>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                            </mat-form-field>
+                                            &nbsp;
+                                            <mat-form-field class="flex-auto gt-xs:pr-3">
+                                                <mat-select
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Separacion de Bienes'"
+                                                    required>
+                                                    <mat-option value="country-1">Si</mat-option>
+                                                    <mat-option value="country-2">No</mat-option>
+                                                </mat-select>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                            </mat-form-field>
+                                            
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="flex-auto gt-xs:pr-3">
+                                                <mat-select
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Nacionalidad'"
+                                                    required>
+                                                    <mat-option value="country-1">Paraguaya</mat-option>
+                                                    <mat-option value="country-2">Argentina</mat-option>
+                                                </mat-select>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                            </mat-form-field>
+                                            &nbsp;
+                                            <mat-form-field class="flex-auto gt-xs:pr-3">
+                                                <mat-select
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Grado Educacion'"
+                                                    required>
+                                                    <mat-option value="country-1">Universitario</mat-option>
+                                                    <mat-option value="country-2">Secundario</mat-option>
+                                                    <mat-option value="country-2">Primario</mat-option>
+                                                </mat-select>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                            </mat-form-field>
+                                            
+                                        </div>
+                                        <div class="flex flex-row">
+                                            <mat-form-field class="flex-auto gt-xs:pr-3">
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Observaciones'"
+                                                    required>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex justify-end">
+                                            <button
+                                                class="px-8"
+                                                mat-flat-button
+                                                [color]="'primary'"
+                                                
+                                                type="button"
+                                                matStepperNext>
+                                                Siguiente
+                                            </button>
+                                        </div>
+                                    </mat-step>
+
+                                    <mat-step
+                                        [formGroupName]="'step2'"
+                                        [stepControl]="horizontalStepperForm.get('step2')"
+                                        #horizontalStepperStep2>
+                                        <ng-template matStepLabel>Domicilios</ng-template>
+                                        <ng-template matStepLabel>Información Personal</ng-template>
+                                        <p class="my-6 font-medium">
+                                            Completa tus datos personales
+                                        </p>
+                                        
+                                        <div class="flex">
+                                            <mat-form-field class="flex-auto">
+                                                <mat-select
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Categoría de Domicilio'"
+                                                    required>
+                                                    <mat-option value="country-1">Principal</mat-option>
+                                                    <mat-option value="country-2">Laboral</mat-option>
+                                                    <mat-option value="country-3">Rural</mat-option>
+                                                </mat-select>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                            </mat-form-field>
+                                            &nbsp;
+                                            <mat-form-field class="flex-auto">
+                                                <mat-select
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Tipo de Domicilio'"
+                                                    required>
+                                                    <mat-option value="country-1">Propio</mat-option>
+                                                    <mat-option value="country-2">Alquilado</mat-option>
+                                                    <mat-option value="country-3">Familiar</mat-option>
+                                                    <mat-option value="country-3">Otros</mat-option>
+                                                </mat-select>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                            </mat-form-field>
+                                            
+                                        </div>
+                                        <div class="flex flex-row">
+                                            <mat-form-field class="flex-auto">
+                                                <mat-select
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Estado de Domicilio'"
+                                                    required>
+                                                    <mat-option value="country-1">Habitado</mat-option>
+                                                    <mat-option value="country-2">Deshabitado</mat-option>
+                                                </mat-select>
+                                                <mat-icon
+                                                class="icon-size-5"
+                                                matPrefix
+                                                [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                            </mat-form-field>
+                                            &nbsp;
+                                        
+                                            <mat-form-field class="flex-col flex-auto">
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'Cta Cte Ctral.'"
+                                                    required>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex flex-row">
+                                            <mat-form-field class="flex-auto">
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'NIS ANDE'"
+                                                    required>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                            </mat-form-field>
+                                            &nbsp;
+                                            <mat-form-field class="flex-auto">
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'country'"
+                                                    [placeholder]="'ISSAN'"
+                                                    required>
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                            </mat-form-field>
+                                            
+                                            
+                                           
+                                        </div>
+                                        
+                                        <div class="flex justify-end">
+                                            <button
+                                                class="px-8 mr-2"
+                                                mat-flat-button
+                                                [color]="'accent'"
+                                                type="button"
+                                                matStepperPrevious>
+                                                Anterior
+                                            </button>
+                                            <button
+                                                class="px-8"
+                                                mat-flat-button
+                                                [color]="'primary'"
+                                                [disabled]="horizontalStepperStep2.stepControl.invalid"
+                                                type="button"
+                                                matStepperNext>
+                                                Siguiente
+                                            </button>
+                                        </div>
+                                    </mat-step>
+
+                                    <!--mat-step
+                                        [formGroupName]="'step3'"
+                                        [stepControl]="horizontalStepperForm.get('step3')">
+                                        <ng-template matStepLabel>Contacto</ng-template>
+                                        <p class="my-6 font-medium">
+                                            We'll always let you know about important changes, but you pick what else you want to hear about.
+                                        </p>
+                                        <div class="flex flex-col gt-sm:flex-row">
+                                            <div class="flex flex-col">
+                                                <span class="font-medium mb-2">By Email</span>
+                                                <div
+                                                    class="flex flex-col"
+                                                    [formGroupName]="'byEmail'">
+                                                    <mat-checkbox
+                                                        class="mb-1"
+                                                        [color]="'primary'"
+                                                        [formControlName]="'companyNews'">
+                                                        Company News
+                                                    </mat-checkbox>
+                                                    <mat-checkbox
+                                                        class="mb-1"
+                                                        [color]="'primary'"
+                                                        [formControlName]="'featuredProducts'">
+                                                        Featured Products
+                                                    </mat-checkbox>
+                                                    <mat-checkbox
+                                                        [color]="'primary'"
+                                                        [formControlName]="'messages'">
+                                                        Messages
+                                                    </mat-checkbox>
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col mt-8 gt-sm:mt-0 gt-sm:ml-16">
+                                                <span class="font-medium mb-2">Push Notifications</span>
+                                                <mat-radio-group
+                                                    class="flex flex-col"
+                                                    [color]="'primary'"
+                                                    [formControlName]="'pushNotifications'">
+                                                    <mat-radio-button
+                                                        class="mb-2"
+                                                        [value]="'everything'">
+                                                        Everything
+                                                    </mat-radio-button>
+                                                    <mat-radio-button
+                                                        class="mb-2"
+                                                        [value]="'just-good'">
+                                                        Just the good stuff
+                                                    </mat-radio-button>
+                                                    <mat-radio-button [value]="'no-push'">
+                                                        No push notifications
+                                                    </mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-end mt-8">
+                                            <button
+                                                class="px-8 mr-2"
+                                                mat-flat-button
+                                                [color]="'accent'"
+                                                type="button"
+                                                matStepperPrevious>
+                                                Back
+                                            </button>
+                                            <button
+                                                class="px-8"
+                                                mat-flat-button
+                                                [color]="'primary'"
+                                                type="button"
+                                                matStepperNext>
+                                                Next
+                                            </button>
+                                        </div>
+                                    </mat-step-->
+
+                                    <mat-step>
+                                        <ng-template matStepLabel>Finalizar</ng-template>
+                                        <p class="my-6 font-medium">
+                                            Gracias por completar la solicitud de asociación! Nos comunicaremos contigo en la brevedad para continuar con el proceso.
+                                        </p>
+                                        <div class="flex justify-end mt-8">
+                                            <button
+                                                class="px-8 mr-2"
+                                                mat-flat-button
+                                                [color]="'accent'"
+                                                type="button"
+                                                matStepperPrevious>
+                                                Anterior
+                                            </button>
+                                            <button
+                                                class="px-8"
+                                                mat-flat-button
+                                                [color]="'primary'"
+                                                type="reset"
+                                                (click)="horizontalStepper.reset();">
+                                                Finalizar
+                                            </button>
+                                        </div>
+                                    </mat-step>
+                                </mat-horizontal-stepper>
+                            </form>
+
+                    </ng-template>
+                </mat-tab>
+
+            </mat-tab-group>
+        </div>
+    </div>
+
+</div>

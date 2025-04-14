@@ -1,0 +1,307 @@
+<div *ngIf="conceptoIngresoActual === 'INM'" class="relative  flex flex-auto w-full bg-card dark:bg-transparent">
+    <!-- Lista de inmuebles -->
+    <ng-container *ngIf="inmuebles && inmuebles.length > 0; else noHayInmuebles">
+        <div class="relative flex flex-auto flex-col w-full min-w-0 lg:min-w-90 lg:max-w-90 border-r z-10">
+
+            <!-- Header -->
+            <div class="relative flex flex-0 items-center justify-between h-16 px-4 border-b bg-gray-50 dark:bg-transparent">
+
+                <div class="flex items-center">
+                    <!-- Sidebar toggle button -->
+                    <button
+                        mat-icon-button
+                        (click)="estadoCuentaComponent.drawer.toggle()">
+                        <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
+                    </button>
+                    <!-- Category name -->
+                    <!-- <div class="ml-2 font-semibold uppercase">{{categoria.nombre}}</div> -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center" *ngIf="pagination">
+                    <!-- Info -->
+                    <div class="flex items-center mr-3 text-md font-medium">
+                        <span>{{pagination.startIndex + 1}}</span>
+                        <span class="mx-1 text-secondary">-</span>
+                        <span>{{pagination.endIndex + 1}}</span>
+                        <span class="mx-1 text-secondary">of</span>
+                        <span>{{pagination.totalResults}}</span>
+                    </div>
+                    <!-- Previous page button -->
+                    <a
+                        class="w-8 h-8 min-h-8"
+                        mat-icon-button
+                        [disabled]="pagination.currentPage === 1"
+                        [routerLink]="['../' + (pagination.currentPage > 1 ? pagination.currentPage - 1 : 1 )]">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
+                    </a>
+                    <!-- Next page button-->
+                    <a
+                        class="w-8 h-8 min-h-8"
+                        mat-icon-button
+                        [disabled]="pagination.currentPage === pagination.lastPage"
+                        [routerLink]="['../' + (pagination.currentPage < pagination.lastPage ? pagination.currentPage + 1 : pagination.lastPage )]">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+                    </a>
+                </div>
+
+                <!-- Loading bar -->
+                <mat-progress-bar
+                    class="absolute inset-x-0 bottom-0 h-0.5"
+                    *ngIf="cargandoCuentas"
+                    [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+
+            <div
+                class="overflow-y-auto"
+                #inmueblesList>
+
+                <!-- Item loop -->
+                <ng-container *ngFor="let inm of inmuebles; let i = index; trackBy: trackByFn">
+
+                    <!-- Item -->
+                    <a
+                        class="relative flex border-t first:border-0 hover:bg-hover"
+                        [routerLink]="[inm.id]"
+                        (click)="onInmuebleSelected(inm)">
+
+                        <!-- Item content -->
+                        <div
+                            class="flex flex-col items-start justify-start w-full py-6 pr-4 pl-5 border-l-4 border-transparent"
+                            [ngClass]="{'bg-primary-50 dark:bg-black dark:bg-opacity-5': selectedInmueble && selectedInmueble.id === inm.id}">
+
+                            <!-- Info -->
+                            <div class="flex items-center w-full">
+                                <!-- Sender name -->
+                                <div class="mr-2 font-semibold truncate">
+                                    Cta. Cte: {{inm.ctaCorrientePadron}}
+                                </div>
+                                <!-- Important indicator -->
+                                <mat-icon
+                                    class="mr-3 icon-size-4 text-red-500 dark:text-red-600"
+                                    [svgIcon]="'heroicons_solid:exclamation-circle'"></mat-icon>
+                                <!-- Categoria -->
+                                <div class="ml-auto text-md text-right whitespace-nowrap text-hint">
+                                    {{inm.categoriaEdificacion?.descripcion}}
+                                </div>
+                            </div>
+
+                            <!-- Subject -->
+                            <div class="flex items-center w-full mt-1">
+                                <span class="leading-4 truncate">Dirección: {{inm.direccion}}</span>
+                                
+                            </div>
+
+                            <!-- Excerpt -->
+                            <div class="mt-2 leading-normal line-clamp-2 text-secondary">
+                                Sup Terreno: {{inm.superficieTierraHa}}
+                                Sup Construcción: {{inm.superficieTierraM2}}
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </ng-container>
+
+            </div>
+
+        </div>
+
+    </ng-container>
+
+    <!-- Template alternativo cuando no hay inmuebles -->
+    <ng-template #noHayInmuebles>
+        <div class="z-100 absolute inset-0 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+            <mat-icon
+                class="icon-size-24"
+                [svgIcon]="'heroicons_outline:exclamation-triangle'"></mat-icon>
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">No posee inmuebles</div>
+        </div>
+    </ng-template>
+
+    <!-- Mail details -->
+    <ng-container *ngIf="inmuebles && inmuebles.length > 0">
+        <div
+            class="flex-auto"
+            [ngClass]="{'z-20 absolute inset-0 lg:static lg:inset-auto flex': selectedInmueble && selectedInmueble.id,
+                        'hidden lg:flex': !selectedInmueble || !selectedInmueble.id}">
+            <router-outlet></router-outlet>
+        </div>
+    </ng-container>
+</div>
+<div *ngIf="conceptoIngresoActual === 'REG'" class="relative  flex flex-auto w-full bg-card dark:bg-transparent">
+
+    <!-- Lista de REGISTROS -->
+    <ng-container *ngIf="registros && registros.length > 0; else noHayRegistros">
+        <div class="relative flex flex-auto flex-col w-full min-w-0 lg:min-w-90 lg:max-w-90 border-r z-10">
+
+            <!-- Header -->
+            <div class="relative flex flex-0 items-center justify-between h-16 px-4 border-b bg-gray-50 dark:bg-transparent">
+
+                <div class="flex items-center">
+                    <!-- Sidebar toggle button -->
+                    <button
+                        mat-icon-button
+                        (click)="estadoCuentaComponent.drawer.toggle()">
+                        <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
+                    </button>
+                    <!-- Category name -->
+                    <!-- <div class="ml-2 font-semibold uppercase">{{categoria.nombre}}</div> -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center" *ngIf="pagination">
+                    <!-- Info -->
+                    <div class="flex items-center mr-3 text-md font-medium">
+                        <span>{{pagination.startIndex + 1}}</span>
+                        <span class="mx-1 text-secondary">-</span>
+                        <span>{{pagination.endIndex + 1}}</span>
+                        <span class="mx-1 text-secondary">of</span>
+                        <span>{{pagination.totalResults}}</span>
+                    </div>
+                    <!-- Previous page button -->
+                    <a
+                        class="w-8 h-8 min-h-8"
+                        mat-icon-button
+                        [disabled]="pagination.currentPage === 1"
+                        [routerLink]="['../' + (pagination.currentPage > 1 ? pagination.currentPage - 1 : 1 )]">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
+                    </a>
+                    <!-- Next page button-->
+                    <a
+                        class="w-8 h-8 min-h-8"
+                        mat-icon-button
+                        [disabled]="pagination.currentPage === pagination.lastPage"
+                        [routerLink]="['../' + (pagination.currentPage < pagination.lastPage ? pagination.currentPage + 1 : pagination.lastPage )]">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+                    </a>
+                </div>
+
+                <!-- Loading bar -->
+                <mat-progress-bar
+                    class="absolute inset-x-0 bottom-0 h-0.5"
+                    *ngIf="cargandoCuentas"
+                    [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+
+            <div
+                class="overflow-y-auto"
+                #inmueblesList>
+
+                <!-- Item loop -->
+                <ng-container *ngFor="let inm of inmuebles; let i = index; trackBy: trackByFn">
+
+                    <!-- Item -->
+                    <a
+                        class="relative flex border-t first:border-0 hover:bg-hover"
+                        [routerLink]="[inm.id]"
+                        (click)="onInmuebleSelected(inm)">
+
+                        <!-- Item content -->
+                        <div
+                            class="flex flex-col items-start justify-start w-full py-6 pr-4 pl-5 border-l-4 border-transparent"
+                            [ngClass]="{'bg-primary-50 dark:bg-black dark:bg-opacity-5': selectedInmueble && selectedInmueble.id === inm.id}">
+
+                            <!-- Info -->
+                            <div class="flex items-center w-full">
+                                <!-- Sender name -->
+                                <div class="mr-2 font-semibold truncate">
+                                    Cta. Cte: {{inm.ctaCorrientePadron}}
+                                </div>
+                                <!-- Important indicator -->
+                                <mat-icon
+                                    class="mr-3 icon-size-4 text-red-500 dark:text-red-600"
+                                    [svgIcon]="'heroicons_solid:exclamation-circle'"></mat-icon>
+                                <!-- Categoria -->
+                                <div class="ml-auto text-md text-right whitespace-nowrap text-hint">
+                                    {{inm.categoriaEdificacion?.descripcion}}
+                                </div>
+                            </div>
+
+                            <!-- Subject -->
+                            <div class="flex items-center w-full mt-1">
+                                <span class="leading-4 truncate">Dirección: {{inm.direccion}}</span>
+                                
+                            </div>
+
+                            <!-- Excerpt -->
+                            <div class="mt-2 leading-normal line-clamp-2 text-secondary">
+                                Sup Terreno: {{inm.superficieTierraHa}}
+                                Sup Construcción: {{inm.superficieTierraM2}}
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </ng-container>
+
+            </div>
+
+        </div>
+
+    </ng-container>
+
+    <!-- Template alternativo cuando no hay inmuebles -->
+    <ng-template #noHayInmuebles>
+        <div class="z-100 absolute inset-0 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+            <mat-icon
+                class="icon-size-24"
+                [svgIcon]="'heroicons_outline:envelope'"></mat-icon>
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">No posee inmuebles</div>
+        </div>
+    </ng-template>
+
+    <!-- Mail details -->
+    <ng-container *ngIf="inmuebles && inmuebles.length > 0">
+        <div
+            class="flex-auto"
+            [ngClass]="{'z-20 absolute inset-0 lg:static lg:inset-auto flex': selectedInmueble && selectedInmueble.id,
+                        'hidden lg:flex': !selectedInmueble || !selectedInmueble.id}">
+            <router-outlet></router-outlet>
+        </div>
+    </ng-container>
+
+
+    <!-- Template alternativo cuando no hay registros -->
+    <ng-template #noHayRegistros >
+        <div class="z-100 absolute inset-0 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+            <mat-icon
+                class="icon-size-24"
+                [svgIcon]="'heroicons_outline:exclamation-triangle'"></mat-icon>
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">No cuenta con registros activos</div>
+        </div>
+    </ng-template>
+
+    <!-- Mail details -->
+    <ng-container *ngIf="registros && registros.length > 0">
+        <div
+            class="flex-auto"
+            [ngClass]="{'z-20 absolute inset-0 lg:static lg:inset-auto flex': selectedRegistro && selectedRegistro.id,
+                        'hidden lg:flex': !selectedRegistro || !selectedRegistro.id}">
+            <router-outlet></router-outlet>
+        </div>
+    </ng-container>
+</div>
+<div *ngIf="conceptoIngresoActual === 'ROD'" class="relative  flex flex-auto w-full bg-card dark:bg-transparent">
+    <ng-container *ngIf="rodados && rodados.length > 0; else noHayRodados">
+
+    </ng-container>
+    <ng-template #noHayRodados >
+        <div class="z-100 absolute inset-0 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+            <mat-icon
+                class="icon-size-24"
+                [svgIcon]="'heroicons_outline:exclamation-triangle'"></mat-icon>
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">No cuenta con rodados activos</div>
+        </div>
+    </ng-template>
+</div>

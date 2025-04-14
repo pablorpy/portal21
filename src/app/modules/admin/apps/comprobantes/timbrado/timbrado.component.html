@@ -1,0 +1,264 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+
+    <!-- Header -->
+    <div
+        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">Timbrados</div>
+
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+            <!-- Búsqueda de Timbrado -->
+            <mat-form-field class="fuse-mat-dense fuse-mat-rounded min-w-s64" [subscriptSizing]="'dynamic'">
+                <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+
+                <input matInput [formControl]="searchInputControl" [autocomplete]="'off'"
+                    [placeholder]="'Buscar timbrados'">
+            </mat-form-field>
+            <!-- Botón Agregar Timbrado -->
+            <button mat-flat-button class="ml-4" [color]="'primary'" (click)="agregarTimbrado()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">Agregar Timbrado</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <!-- Lista de Timbrados -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(timbrados$ | async) as timbrados">
+                <ng-container *ngIf="timbrados.length > 0; else noTimbrados">
+                    <div class="grid">
+                        <!-- Header     -->
+                        <div class="inventory-grid z-10 sticky top-0 grid grid-cols-5 gap-8 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                            matSort matSortDisableClear>
+
+                            <div class="hidden sm:block" [mat-sort-header]="'nroTimbrado'">
+                                Nro. Timbrado
+                            </div>
+
+                            <div class="hidden sm:block" [mat-sort-header]="'factHasta'">
+                                Factura hasta
+                            </div>
+
+                            <div class="hidden sm:block" [mat-sort-header]="'fechaValidez'">
+                                Fecha de validez
+                            </div>
+
+                            <div class="hidden sm:block" [mat-sort-header]="'estado'">
+                                Estado
+                            </div>
+                            <div class="hidden sm:block">Detalle</div>
+                        </div>
+
+                        <!-- Rows -->
+                        <ng-container *ngIf="(timbrados$ | async) as timbrados">
+                            <ng-container *ngFor="let timbrado of timbrados; trackBy: trackByFn">
+                                <div
+                                    class="inventory-grid grid grid-cols-5 items-center gap-4 py-3 px-6 md:px-8 border-b">
+
+                                    <!--nro timbrado-->
+                                    <div class="hidden sm:block truncate">
+                                        {{timbrado.nroTimbrado}}
+                                    </div>
+
+                                    <!--factHasta -->
+                                    <div class="hidden sm:block truncate">
+                                        {{timbrado.factHasta}}
+                                    </div>
+
+                                    <!--fechaValidez -->
+                                    <div class="hidden sm:block truncate">
+                                        {{timbrado.fechaValidez}}
+                                    </div>
+                                    <!--estado -->
+                                    <div class="hidden sm:block truncate">
+                                        {{timbrado.estado?.descripcion}}
+                                    </div>
+
+                                    <!-- Details button -->
+                                    <div>
+                                        <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button
+                                            (click)="toggleDetails(timbrado.id)">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="selectedTimbrado?.id === timbrado.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
+                                        </button>
+                                    </div>
+
+                                </div>
+                                <div class="grid">
+                                    <ng-container *ngIf="selectedTimbrado?.id === timbrado.id">
+                                        <ng-container
+                                            *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: timbrado}"></ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator
+                        class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                        [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.length"
+                        [pageIndex]="pagination.page" [pageSize]="pagination.size" [pageSizeOptions]="[5, 10, 25, 100]"
+                        [showFirstLastButtons]="true">
+                    </mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <ng-template #rowDetailsTemplate let-timbrado>
+                <div class="shadow-lg overflow-hidden">
+                    <div class="flex border-b">
+                        <!-- Selected timbrado form -->
+                        <form class="flex flex-col w-full" [formGroup]="selectedTimbradoForm">
+
+                            <div class="flex flex-col w-full p-8">
+
+                                <div class="flex flex-auto flex-wrap">
+                                    <div class="flex flex-col w-full lg:w-3/4 sm:pl-8">
+                                        <div class="flex">
+                                            <mat-form-field class="w-2/5 pr-2">
+                                                <mat-label>Nº Timbrado</mat-label>
+                                                <input matInput [formControlName]="'nroTimbrado'">
+                                            </mat-form-field>
+
+                                            <mat-form-field class="w-2/5 pr-2">
+                                                <mat-label>Establecimiento</mat-label>
+                                                <input placeholder="Ingresa Nº establecimiento" matInput
+                                                    [formControlName]="'nroEstablecimiento'">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Expedición</mat-label>
+                                                <input placeholder="Ingresa Punto Exp" matInput
+                                                    [formControlName]="'puntoExpedicion'">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Tipo Comprobante</mat-label>
+                                                <mat-select [formControlName]="'tipoComprobante'" >
+                                                    <ng-container>
+                                                        <mat-option [value]="0" >
+                                                            SELECCIONA UNA OPCIÓN
+                                                        </mat-option>
+                                                    </ng-container>
+                                                    <ng-container *ngFor="let tc of tiposComprobantes">
+                                                        <mat-option [value]="tc.id">
+                                                            {{tc.descripcion}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Estado</mat-label>
+                                                <mat-select [formControlName]="'estado'">
+                                                    <ng-container>
+                                                        <mat-option [value]="0" >
+                                                            SELECCIONA UNA OPCIÓN
+                                                        </mat-option>
+                                                    </ng-container>
+                                                    <ng-container *ngFor="let e of estados">
+                                                        <mat-option [value]="e.id">
+                                                            {{e.descripcion}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Fecha inicio</mat-label>
+                                                <!-- <input type="datetime" matInput [formControlName]="'fechaInicio'"> -->
+                                                <mat-icon
+                                                    matPrefix
+                                                    class="hidden sm:flex icon-size-5"
+                                                    [svgIcon]="'heroicons_solid:calendar'"></mat-icon>
+                                                <input
+                                                    matInput
+                                                    [matDatepicker]="fechaInicioDatepicker"
+                                                    [formControlName]="'fechaInicio'"
+                                                    [placeholder]="'Fecha inicio'">
+                                                <mat-datepicker-toggle
+                                                    matSuffix
+                                                    [for]="fechaInicioDatepicker">
+                                                </mat-datepicker-toggle>
+                                                <mat-datepicker #fechaInicioDatepicker></mat-datepicker>
+                                            </mat-form-field>
+
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Fecha Vencimiento</mat-label>
+                                                <!-- <input type="datetime" matInput
+                                                    [formControlName]="'fechaVencimiento'"> -->
+                                                    <mat-icon
+                                                        matPrefix
+                                                        class="hidden sm:flex icon-size-5"
+                                                        [svgIcon]="'heroicons_solid:calendar'"></mat-icon>
+                                                    <input
+                                                        matInput
+                                                        [matDatepicker]="fechaVencimientoDatepicker"
+                                                        [formControlName]="'fechaVencimiento'"
+                                                        [placeholder]="'Fecha vencimiento'">
+                                                    <mat-datepicker-toggle
+                                                        matSuffix
+                                                        [for]="fechaVencimientoDatepicker">
+                                                    </mat-datepicker-toggle>
+                                                    <mat-datepicker #fechaVencimientoDatepicker></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Cantidad</mat-label>
+                                                <input matInput [formControlName]="'cantidad'">
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between w-full border-t px-8 py-4">
+
+                                <div class="flex items-center">
+                                    <div class="flex items-center mr-4" *ngIf="flashMessage">
+
+                                        <ng-container *ngIf="flashMessage === 'success'">
+                                            <mat-icon class="text-green-500"
+                                                [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                            <span class="ml-2">Registro Actualizado</span>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="flashMessage === 'error'">
+                                            <mat-icon class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">Se ha producido un error, inténtelo de nuevo.</span>
+                                        </ng-container>
+                                    </div>
+
+                                    <button mat-flat-button (click)="updateSelectedTimbrado()" [color]="'primary'">
+                                        {{buttonLabel}}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template #noTimbrados>
+                <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">No hay Timbrados!
+                </div>
+            </ng-template>
+
+        </div>
+
+    </div>
+
+</div>

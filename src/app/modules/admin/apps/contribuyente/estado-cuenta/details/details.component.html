@@ -1,0 +1,434 @@
+<div class="flex flex-col flex-auto overflow-y-auto lg:overflow-hidden bg-card dark:bg-default">
+
+    <ng-container *ngIf="inmueble; else selectInmuebleToRead">
+
+        <!-- Header -->
+        <div class="z-10 relative flex flex-col flex-0 w-full border-b">
+
+            <!-- Toolbar -->
+            <div class="flex items-center min-h-16 px-4 md:px-6 border-b bg-gray-50 dark:bg-transparent">
+
+                <!-- Back button -->
+                <a
+                    class="lg:hidden md:-ml-2"
+                    mat-icon-button
+                    [routerLink]="['./../']">
+                    <mat-icon [svgIcon]="'heroicons_outline:arrow-long-left'"></mat-icon>
+                </a>
+                   
+               
+                <!-- Toggle labels button & menu -->
+                <!-- <button
+                    class="ml-auto"
+                    mat-icon-button
+                    [matMenuTriggerFor]="toggleLabelMenu">
+                    <mat-icon [svgIcon]="'heroicons_outline:tag'"></mat-icon>
+                </button>
+                <mat-menu #toggleLabelMenu="matMenu">
+                    <ng-container *ngFor="let label of labels; trackBy: trackByFn">
+                        <div
+                            mat-menu-item
+                            (click)="toggleLabel(label)"
+                            matRipple>
+                            <mat-checkbox
+                                class="pointer-events-none"
+                                [color]="'primary'"
+                                [checked]="mail.labels.includes(label.id)"
+                                [disableRipple]="true">
+                                {{label.title}}
+                            </mat-checkbox>
+                        </div>
+                    </ng-container>
+                </mat-menu> -->
+
+                <!-- Toggle important button -->
+               <!--  <button
+                    class="ml-2"
+                    mat-icon-button
+                    (click)="toggleImportant()">
+                    <mat-icon
+                        [ngClass]="{'text-red-600 dark:text-red-500': mail.important}"
+                        [svgIcon]="'heroicons_outline:exclamation-circle'"></mat-icon>
+                </button> -->
+
+                <!-- Toggle starred button -->
+               <!--  <button
+                    class="ml-2"
+                    mat-icon-button
+                    (click)="toggleStar()">
+                    <mat-icon
+                        [ngClass]="{'text-orange-500 dark:text-red-400': mail.starred}"
+                        [svgIcon]="'heroicons_outline:star'"></mat-icon>
+                </button> -->
+
+                <!-- Other actions button & menu -->
+                <!-- <button
+                    class="ml-2"
+                    mat-icon-button
+                    [matMenuTriggerFor]="mailMenu">
+                    <mat-icon [svgIcon]="'heroicons_outline:ellipsis-vertical'"></mat-icon>
+                </button> -->
+                <!-- <mat-menu #mailMenu="matMenu"> -->
+                    <!-- Mark as read / unread -->
+                    <!-- <button
+                        mat-menu-item
+                        *ngIf="mail.unread"
+                        (click)="toggleUnread(false)">
+                        <mat-icon [svgIcon]="'heroicons_outline:envelope-open'"></mat-icon>
+                        <span>Mark as read</span>
+                    </button>
+                    <button
+                        mat-menu-item
+                        *ngIf="!mail.unread"
+                        (click)="toggleUnread(true)">
+                        <mat-icon [svgIcon]="'heroicons_outline:envelope'"></mat-icon>
+                        <span>Mark as unread</span>
+                    </button> -->
+                    <!-- Marks as spam / not span-->
+                    <!-- <button
+                        mat-menu-item
+                        *ngIf="getCurrentFolder() !== 'spam' && getCurrentFolder() !== 'drafts'"
+                        (click)="moveToFolder('spam')">
+                        <mat-icon [svgIcon]="'heroicons_outline:exclamation-triangle'"></mat-icon>
+                        <span>Spam</span>
+                    </button>
+                    <button
+                        mat-menu-item
+                        *ngIf="getCurrentFolder() === 'spam'"
+                        (click)="moveToFolder('inbox')">
+                        <mat-icon [svgIcon]="'heroicons_outline:exclamation-triangle'"></mat-icon>
+                        <span>Not spam</span>
+                    </button> -->
+                    <!-- Delete -->
+                    <!-- <button
+                        mat-menu-item
+                        *ngIf="getCurrentFolder() !== 'trash'"
+                        (click)="moveToFolder('trash')">
+                        <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                        <span>Delete</span>
+                    </button> -->
+                <!-- </mat-menu> -->
+                <!-- <mat-form-field 
+                    class="fuse-mat-dense flex flex-col w-2/4 lg:w-2/4 p-3">
+                    <mat-label>Tipo Documento *</mat-label>
+                </mat-form-field> -->
+                <!-- <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4"> -->
+                    
+                    
+                    <!-- Búsqueda -->
+                    <!-- <mat-form-field
+                        class="fuse-mat-dense fuse-mat-rounded min-w-64"
+                        [subscriptSizing]="'dynamic'">
+                        <mat-icon
+                            class="icon-size-5"
+                            matPrefix
+                            [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+        
+                        <input
+                            matInput
+                            [formControl]="searchInputControl"
+                            [autocomplete]="'off'"
+                            [placeholder]="'Buscar por Nombre'">
+                    </mat-form-field> -->
+                    <!-- Botón Agregar -->
+                    <!-- <button mat-flat-button class="ml-4" [color]="'primary'" (click)="agregarContribuyente()">
+                        <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                        <span class="ml-2 mr-1">Consultar</span>
+                    </button>
+                </div> -->
+                <!-- <div class="flex flex-col gt-md:flex-row">
+                    <mat-form-field
+                    class="flex-auto gt-md:pr-3">
+                    <mat-select [formControlName]="'tipoDocumento'" [(value)]="defaultTipoDoc">
+                        <ng-container *ngFor="let x of tiposDocumentos">
+                            <mat-option [value]="x.id" >
+                                {{x.descripcion}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                    </mat-form-field> -->
+                    <!-- <mat-form-field>
+                        <mat-icon
+                        class="icon-size-5"
+                        [svgIcon]="'heroicons_solid:magnifying-glass'"
+                        matPrefix></mat-icon>
+                        <mat-label>Nro. Documento *</mat-label>
+                        <input
+                            matInput
+                            [autocomplete]="'off'"
+                            [placeholder]="'Consulta por número de documento'"
+                            [aria-describedby]=""
+                            #searchInput>
+                    </mat-form-field> -->
+                <!-- </div> -->
+            </div>
+
+            <!-- Subject and Labels -->
+            <div class="flex flex-wrap items-center py-5 px-6">
+                <!-- Subject -->
+                <div class="flex flex-auto my-1 mr-4 text-2xl">Dirección: {{inmueble.direccionInmueble}}
+                    <BR>Cta. Cte: {{inmueble.ctaCorrientePadron}}
+                </div>
+            </div>
+
+                
+                <!-- Labels -->
+                <!-- <ng-container *ngIf="mail.labels && mail.labels.length > 0">
+                    <div class="flex flex-wrap items-center justify-start -mx-1">
+                        <ng-container *ngFor="let label of (mail.labels | fuseFindByKey:'id':labels)">
+                            <div
+                                class="m-1 py-0.5 px-2.5 rounded-full text-sm font-medium whitespace-nowrap"
+                                [ngClass]="labelColors[label.color].combined">
+                                {{label.title}}
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container> -->
+
+        </div>
+
+        <!-- Threads -->
+        <div
+            class="flex flex-col flex-auto shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent"
+            fuseScrollReset>
+
+            <!-- Thread -->
+            <div class="flex flex-col flex-0 w-full shadow rounded-2xl overflow-hidden bg-card dark:bg-black dark:bg-opacity-10">
+
+                <div class="flex flex-col py-8 px-6">
+
+                    <!-- Header -->
+                    <div class="flex items-center w-full">
+
+                        <!-- Sender avatar -->
+                        <!-- <div class="flex flex-0 items-center justify-center w-10 h-10 rounded-full overflow-hidden">
+                            <img
+                                class="w-full h-full"
+                                [src]="home"
+                                alt="User avatar">
+                        </div> -->
+
+                        <!-- Info -->
+                        <div class="ml-4 min-w-0">
+
+                            <!-- From -->
+                            <div class="font-semibold">Contribuyente: <span [ngClass]="'text-lg font-medium text-green-600 dark:text-green-500'">{{inmueble.contribuyente.nombre}} {{inmueble.contribuyente.apellido}}</span></div>
+                            <div class="font-semibold" *ngIf="inmueble.contribuyente?.direccion">Dirección Contribuyente: <span [ngClass]="'text-lg font-medium text-green-600 dark:text-green-500'">{{inmueble.contribuyente.direccion}}</span></div>
+                            <!-- To -->
+                            <div class="flex items-center mt-3.5 leading-5">
+                                <!-- <div>to</div>
+                                <div class="ml-1 font-semibold">me</div> -->
+                                <!-- <ng-container *ngIf="inmueble.contribuyente?.direccion"> -->
+                                    <div>
+                                        <!-- <span class="ml-1">and</span> -->
+                                        <!-- <span class="ml-1 font-semibold">{{inmueble.contribuyente.direccion}}</span> -->
+                                        <!-- <span
+                                            class="ml-1 font-semibold"
+                                            [ngPlural]="(mail.ccCount + mail.bccCount)">
+                                            <ng-template ngPluralCase="=1">other</ng-template>
+                                            <ng-template ngPluralCase="other">others</ng-template>
+                                        </span> -->
+                                        <ng-container *ngIf="cuentasInmueble && cuentasInmueble.length > 0;">
+
+                                            <!-- Important indicator -->
+                                            <!-- <mat-icon
+                                                class="mr-3 icon-size-4 text-red-500 dark:text-red-600"
+                                                [svgIcon]="'heroicons_solid:exclamation-circle'"></mat-icon> -->
+                                            <!-- Categoria -->
+                                            
+                                            <div class="flex flex-auto my-1 mr-4 text-2xl">
+                                                Detalle de Cuentas del Inmueble:
+                                            </div>
+                                            <div class="mx-2 mt-4 space-y-1.5">
+                                                <ng-container *ngFor="let det of cuentasInmueble; let i = index; trackBy: trackByFn">
+                                                    <div class="group flex items-center">
+                                                        <mat-checkbox #ref
+                                                            class="flex items-center"
+                                                            [color]="'primary'"
+                                                        
+                                                            (change)="agregarCuentaInmAProforma(det)">
+                                                            <ng-container *ngIf="det.anho">
+                                                                <div [class.text-xl]="true" class="font-semibold line-clamp-3">
+                                                                    Año:<span [ngClass]="'text-lg font-medium text-red-600 dark:text-red-500'"> {{det.anho}} </span> => 
+                            
+                                                                    Monto a Pagar:<span [ngClass]="'text-lg font-medium text-red-600 dark:text-red-500'"> {{det.totalPagar | currency:'PYG':'symbol-narrow':'.0-0':'py'}} </span>
+                                                                </div>
+                                                            </ng-container>
+                                                        
+                                                        </mat-checkbox>
+                                                        
+                                                        
+                                                    </div>
+                                                </ng-container>
+                                                <!-- <div class="flex items-center">
+                                                    <mat-icon
+                                                        class="-ml-0.5 icon-size-5 text-hint"
+                                                        [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                                                    <input
+                                                        class="w-full ml-1.5 px-1 py-0.5"
+                                                        [placeholder]="'Add task'"
+                                                        (keydown.enter)="addTaskT inm, newTaskInput.value); newTaskInput.value = ''"
+                                                        #newTaskInput>
+                                                </div> -->
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                <!-- </ng-container> -->
+
+                                <!-- Info details panel button -->
+                                <!-- <button
+                                    class="w-5 h-5 min-h-5 ml-1"
+                                    mat-icon-button
+                                    (click)="openInfoDetailsPanel()"
+                                    #infoDetailsPanelOrigin>
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:chevron-down'"></mat-icon>
+                                </button> -->
+
+                                <!-- Info details panel -->
+                                <!-- <ng-template #infoDetailsPanel>
+                                    <div class="flex flex-col py-4 px-6 w-full max-w-160 space-y-1.5 border text-md rounded shadow-md overflow-auto bg-card">
+                                        
+                                        <div class="flex">
+                                            <div class="min-w-14 font-medium text-right">from:</div>
+                                            <div class="pl-2 whitespace-pre-wrap">{{mail.from.contact}}</div>
+                                        </div>
+                                        
+                                        <div class="flex">
+                                            <div class="min-w-14 font-medium text-right">to:</div>
+                                            <div class="pl-2 whitespace-pre-wrap">{{mail.to}}</div>
+                                        </div>
+                                        
+                                        <ng-container *ngIf="mail.cc">
+                                            <div class="flex">
+                                                <div class="min-w-14 font-medium text-right">cc:</div>
+                                                <div class="pl-2 whitespace-pre-wrap">{{mail.cc.join(',\n')}}</div>
+                                            </div>
+                                        </ng-container>
+                                        
+                                        <ng-container *ngIf="mail.bcc">
+                                            <div class="flex">
+                                                <div class="min-w-14 font-medium text-right">bcc:</div>
+                                                <div class="pl-2 whitespace-pre-wrap">{{mail.bcc.join(',\n')}}</div>
+                                            </div>
+                                        </ng-container>
+                                        
+                                        <div class="flex">
+                                            <div class="min-w-14 font-medium text-right">date:</div>
+                                            <div class="pl-2 whitespace-pre-wrap">{{mail.date | date:'EEEE, MMMM d, y - hh:mm a'}}</div>
+                                        </div>
+                                        
+                                        <div class="flex">
+                                            <div class="min-w-14 font-medium text-right">subject:</div>
+                                            <div class="pl-2 whitespace-pre-wrap">{{mail.subject}}</div>
+                                        </div>
+                                    </div>
+                                </ng-template> -->
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Content -->
+                    <!-- <div
+                        class="flex mt-8 whitespace-pre-line leading-relaxed"
+                        [innerHTML]="mail.content">
+                    </div> -->
+                    <ng-container *ngIf="inm">
+                        <div class="m-4">
+                            <!-- Title -->
+                            <div>
+                                <input readonly
+                                    class="w-full p-2 text-2xl"
+                                    [placeholder]="'Datos del Inmueble'">
+                            </div>
+                            <!-- inm -->
+                            <div class="flex w-full py-2 px-2">
+                                <ng-container *ngIf="inmueble.ctaCorrientePadron">
+                                    <div [class.text-xl]="true" class="font-semibold line-clamp-3">
+                                        <span [ngClass]="'text-lg font-medium text-green-600 dark:text-green-500'">Cuenta Cte/ Padrón:</span> {{inmueble.ctaCorrientePadron}}
+                                    </div>
+                                </ng-container>
+                            </div>
+                            <!-- inm -->
+                            <div class="flex w-full py-2 px-2">    
+                                <!-- Content -->
+                                <ng-container *ngIf="inmueble.direccionInmueble">
+                                    <div [class.text-xl]="inmueble.direccionInmueble.length < 70">
+                                        <span [ngClass]="'text-lg font-medium text-green-600 dark:text-green-500'">Dirección:</span> {{inmueble.direccionInmueble}}
+                                    </div>
+                                </ng-container>
+                            </div>
+                            <!-- Tasks -->
+                            <ng-container *ngIf="(cuentasInmueble$ | async) as ctas">
+                                <div>
+                                    <input readonly
+                                        class="w-full p-2 text-2xl"
+                                        [placeholder]="'Detalle de Cuentas del Inmueble:'">
+                                </div>
+                                <div class="mx-2 mt-4 space-y-1.5">
+                                    <ng-container *ngFor="let det of ctas; trackBy: trackByFn">
+                                        <div class="group flex items-center">
+                                            <mat-checkbox
+                                                class="flex items-center"
+                                                [color]="'primary'"
+                                               
+                                                (change)="agregarCuentaAProforma(det)">
+                                                <ng-container *ngIf="det.anho">
+                                                    <div [class.text-xl]="true" class="font-semibold line-clamp-3">
+                                                        Año:<span [ngClass]="'text-lg font-medium text-red-600 dark:text-red-500'"> {{det.anho}} </span> => 
+                
+                                                        Monto a Pagar:<span [ngClass]="'text-lg font-medium text-red-600 dark:text-red-500'"> {{det.totalPagar}} </span>
+                                                    </div>
+                                                </ng-container>
+                                            
+                                            </mat-checkbox>
+                                            
+                                            
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="inmueble.id">
+                                <div class="flex flex-0 items-center justify-between mt-4">
+                                    <div class="text-lg font-medium"></div>
+                                    <!-- Close -->
+                                    <button
+                                        mat-flat-button
+                                        matDialogClose>
+                                        Cerrar
+                                    </button>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+
+                    
+
+                </div>
+
+                <!-- Footer -->
+                
+
+            </div>
+
+        </div>
+
+    </ng-container>
+
+    <!-- Select mail to read template -->
+    <ng-template #selectInmuebleToRead>
+
+        <div class="flex flex-col flex-auto items-center justify-center bg-gray-100 dark:bg-transparent">
+            <mat-icon
+                class="icon-size-24"
+                [svgIcon]="'heroicons_outline:information-triangle'"></mat-icon>
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">Seleccione un inmueble para ver sus cuentas</div>
+        </div>
+
+    </ng-template>
+
+</div>
+<proforma></proforma>

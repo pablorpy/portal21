@@ -1,0 +1,273 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+
+    <!-- Header -->
+    <div
+        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">ABM Dimensiones</div>
+
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+            <!-- Botón Agregar Dominio -->
+            <button mat-flat-button [color]="'primary'" (click)="agregarDimension()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">Agregar Dimension</span>
+            </button>            
+            <button mat-icon-button (click)="closeDialog()" class="close-button absolute top-0 right-0 p-2 bg-transparent border-none text-red-500 hover:text-red-700" color="warn">
+                <mat-icon>close</mat-icon>
+            </button>  
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <!-- Lista de Dominios -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(dimensiones$ | async) as dimensiones">
+                <ng-container *ngIf="dimensiones.length > 0; else noDimensiones">
+                    <div class="grid">
+                        <!-- Header     -->
+                        <div class="inventory-grid z-10 sticky top-0 grid grid-cols-4 gap-8 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                            matSort matSortDisableClear>
+
+                            <div class="hidden sm:block" [mat-sort-header]="'dimension'">
+                                Código
+                            </div>
+                            <div class="hidden sm:block" [mat-sort-header]="'ctaCte'">
+                                Cuenta Corriente
+                            </div>
+                            <div class="hidden sm:block" [mat-sort-header]="'obs'">
+                                Observación
+                            </div>
+                           
+                            <div class="hidden sm:block">Detalle</div>
+                        </div>
+                        <!-- Rows -->
+                        <ng-container *ngIf="(dimensiones$ | async) as dimensiones">
+                            <ng-container *ngFor="let dimension of dimensiones; trackBy: trackByFn">
+                                <div
+                                    class="inventory-grid grid grid-cols-4 items-center gap-4 py-3 px-6 md:px-8 border-b">
+                                    <!-- Código -->
+                                    <div class="hidden sm:block truncate" aria-readonly="">
+                                        {{dimension.dimension}}
+                                    </div>
+                                    <div class="hidden sm:block truncate" aria-readonly="">
+                                        {{dimension.ctaCte}}
+                                    </div>
+                                    <div class="hidden sm:block truncate" aria-readonly="">
+                                        {{dimension.observacion}}
+                                    </div>
+                                    <!-- Details button -->
+                                    <div>
+                                        <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button
+                                            (click)="toggleDetails(dimension.dimension)">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="selectedDimension?.dimension === dimension.dimension ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="grid">
+                                    <ng-container *ngIf="selectedDimension?.dimension === dimension.dimension">
+                                        <ng-container
+                                            *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: dimension}"></ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </ng-container>
+
+            <ng-template #rowDetailsTemplate let-dimension>
+                <div class="shadow-lg overflow-hidden">
+                    <div class="flex border-b">
+                        <!-- Selected registro form -->
+                        <form class="flex flex-col w-full" [formGroup]="selectedDimensionForm">
+                            <div class="flex flex-col w-full p-8">
+                                <div class="flex flex-auto flex-wrap">
+                                    <div class="flex flex-col w-full lg:w-full sm:pl-8">
+                                        <div class="flex">
+                                            <mat-form-field class="w-1/6 pr-2">
+                                                <mat-label>ID</mat-label>
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'dimension'" style="font-weight: bold; text-align: center;" readonly>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/6 pr-2">
+                                                <mat-label>Cta Cte</mat-label>
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'ctaCte'" style="font-weight: bold; text-align: center;" readonly>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-1/3 pr-2">
+                                                <mat-label>Área</mat-label>
+                                                <input placeholder="Área" matInput 
+                                                  [formControlName]="'areaDimension'"
+                                                  pattern="^\d+(\.\d{1,2})?$"
+                                                  title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" (blur)="markAsTouched(selectedDimensionForm.get('areaDimension'))">
+                                                  <mat-error *ngIf="selectedDimensionForm.get('areaDimension').hasError('required') && selectedDimensionForm.get('areaDimension').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/3 pr-2">
+                                                <mat-label>Posición</mat-label>
+                                                <input placeholder="Posición" matInput readonly
+                                                  [formControlName]="'posicion'"
+                                                  pattern="^\d+(\.\d{1,2})?$"
+                                                  title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" (blur)="markAsTouched(selectedDimensionForm.get('posicion'))">
+                                                  <mat-error *ngIf="selectedDimensionForm.get('posicion').hasError('required') && selectedDimensionForm.get('posicion').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/3 pr-2">
+                                                <mat-label>Tramo Calle</mat-label>
+                                                <input placeholder="Tramo" matInput 
+                                                  [formControlName]="'tramoCalle'"
+                                                  pattern="^\d+(\.\d{1,2})?$"
+                                                  title="Por favor ingrese un valor decimal válido (hasta 2 decimales utilizando punto)" (blur)="markAsTouched(selectedDimensionForm.get('tramoCalle'))">
+                                                  <mat-error *ngIf="selectedDimensionForm.get('tramoCalle').hasError('required') && selectedDimensionForm.get('tramoCalle').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-1/6 pr-2">
+                                                <mat-label>Borrado</mat-label>
+                                                <input matInput [formControlName]="'borrado'" readonly>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/6 pr-2">
+                                                <mat-label>Año</mat-label>
+                                                <input matInput [formControlName]="'desdeAnio'" readonly>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Observación</mat-label>
+                                                <input matInput
+                                                    [formControlName]="'observacion'" (blur)="markAsTouched(selectedDimensionForm.get('observacion'))"/>
+                                                    <mat-error *ngIf="selectedDimensionForm.get('observacion').hasError('required') && selectedDimensionForm.get('observacion').touched">
+                                                      Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>  
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Calle Principal</mat-label>
+                                                <mat-select [formControlName]="'callePrincipal'" (blur)="markAsTouched(selectedDimensionForm.get('callePrincipal'))">
+                                                  <mat-error *ngIf="selectedDimensionForm.get('callePrincipal').hasError('required') && selectedDimensionForm.get('callePrincipal').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                                  <ng-container *ngFor="let dp of callesPrincipales">
+                                                    <mat-option [value]="dp.id">
+                                                      {{ dp.descripcion }}
+                                                    </mat-option>
+                                                  </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Calle</mat-label>
+                                                <mat-select [formControlName]="'calle'" (blur)="markAsTouched(selectedDimensionForm.get('calle'))">
+                                                  <mat-error *ngIf="selectedDimensionForm.get('calle').hasError('required') && selectedDimensionForm.get('calle').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                                  <ng-container *ngFor="let dp of calles">
+                                                    <mat-option [value]="dp.id">
+                                                      {{ dp.descripcion }}
+                                                    </mat-option>
+                                                  </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Categoría Zona</mat-label>
+                                                <mat-select [formControlName]="'categoriaZona'" (blur)="markAsTouched(selectedDimensionForm.get('categoriaZona'))">
+                                                  <mat-error *ngIf="selectedDimensionForm.get('categoriaZona').hasError('required') && selectedDimensionForm.get('categoriaZona').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                                  <ng-container *ngFor="let dp of categoriasZonas">
+                                                    <mat-option [value]="dp.id">
+                                                      {{ dp.descripcion }}
+                                                    </mat-option>
+                                                  </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Frentes</mat-label>
+                                                <mat-select [formControlName]="'frentes'" (blur)="markAsTouched(selectedDimensionForm.get('frentes'))">
+                                                  <mat-error *ngIf="selectedDimensionForm.get('frentes').hasError('required') && selectedDimensionForm.get('frentes').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                                  <ng-container *ngFor="let dp of frentes">
+                                                    <mat-option [value]="dp.id">
+                                                      {{ dp.descripcion }}
+                                                    </mat-option>
+                                                  </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Orientaciones</mat-label>
+                                                <mat-select [formControlName]="'orientacion'" (blur)="markAsTouched(selectedDimensionForm.get('orientacion'))">
+                                                  <mat-error *ngIf="selectedDimensionForm.get('orientacion').hasError('required') && selectedDimensionForm.get('orientacion').touched">
+                                                    Campo requerido!
+                                                  </mat-error>
+                                                  <ng-container *ngFor="let dp of orientaciones">
+                                                    <mat-option [value]="dp.id">
+                                                      {{ dp.descripcion }}
+                                                    </mat-option>
+                                                  </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>  
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between w-full border-t px-8 py-4">
+                                <div class="flex items-center">
+                                    <div class="flex items-center mr-4" *ngIf="flashMessage">
+                                        <ng-container *ngIf="flashMessage === 'success'">
+                                            <mat-icon class="text-green-500"
+                                                [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                            <span class="ml-2">Registro Actualizado</span>
+                                        </ng-container>
+                                        <ng-container *ngIf="flashMessage === 'error'">
+                                            <mat-icon class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">Se ha producido un error, inténtelo de nuevo.</span>
+                                        </ng-container>
+                                        <ng-container *ngIf="flashMessage === 'validacion'">
+                                            <mat-icon
+                                                class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">Campos incompletos.</span>
+                                        </ng-container>
+                                    </div>
+                                    <button mat-flat-button (click)="updateSelectedDimension()" [color]="'primary'">
+                                        Actualizar
+                                    </button>
+                                    <button
+                                        mat-flat-button
+                                        type="button"
+                                        [color]="'red'">
+                                        Eliminar 
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template #noDimensiones>
+                <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">No hay Registros!
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

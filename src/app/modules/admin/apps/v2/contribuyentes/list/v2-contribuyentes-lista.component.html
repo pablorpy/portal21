@@ -1,0 +1,548 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+
+    <!-- Header -->
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+
+        <!-- Loader -->
+        <div
+            class="absolute inset-x-0 bottom-0"
+            *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">Contribuyentes</div>
+
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+ 
+            <!-- Búsqueda -->
+            <mat-form-field
+                class="fuse-mat-dense fuse-mat-rounded min-w-64"
+                [subscriptSizing]="'dynamic'">
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+
+                <input
+                    matInput
+                    [formControl]="searchInputControl"
+                    [autocomplete]="'off'"
+                    [placeholder]="'Buscar por Nombre'">
+            </mat-form-field>
+
+            <!-- Botón Agregar -->
+            <button mat-flat-button class="ml-4" [color]="'primary'" (click)="agregarContribuyente()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">Agregar Contribuyente</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <!-- Lista -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(contribuyentes$ | async) as contribuyentes">
+                <ng-container *ngIf="contribuyentes.length > 0; else noContribuyentes">
+                    <div class="grid">
+                        <!-- Header     -->
+                        <div
+                            class="inventory-grid z-10 sticky top-0 grid grid-cols-5 gap-8 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                            matSort
+                            matSortDisableClear>
+
+                             <!-- Columna RMC (centrada y más pequeña) -->
+                            <div class="w-16 text-center hidden sm:block" [mat-sort-header]="'rmc'">
+                                RMC
+                            </div>
+
+                            <!-- Columna Nombre (más ancha y alineada a la izquierda) -->
+                            <div class="flex-1 text-left hidden sm:block" [mat-sort-header]="'nombreContribuyente'">
+                                Nombre
+                            </div>
+
+                            <!-- Columna Apellido (más ancha y alineada a la izquierda) -->
+                            <div class="flex-1 text-left hidden sm:block" [mat-sort-header]="'apellidoContribuyente'">
+                                Apellido
+                            </div>
+
+                            <!-- Columna Dirección (más ancha y alineada a la izquierda) -->
+                            <div class="flex-1 text-left hidden sm:block" [mat-sort-header]="'direccionContribuyente'">
+                                Dirección
+                            </div>
+
+                            <div class="hidden sm:block">Detalle</div>
+
+                        </div>
+
+                        <!-- Rows -->
+                        <ng-container *ngIf="(contribuyentes$ | async) as contribuyentes">
+                            <ng-container *ngFor="let contribuyente of contribuyentes; trackBy: trackByFn">
+                                <div class="inventory-grid grid grid-cols-5 items-center gap-4 py-3 px-6 md:px-8 border-b">
+
+                                    <!-- RMC (centrado y más pequeño) -->
+                                    <div class="w-16 text-center hidden sm:block truncate">
+                                        {{contribuyente.rmc}}
+                                    </div>
+
+                                    <!-- Nombre (más ancho y alineado a la izquierda) -->
+                                    <div class="flex-1 text-left hidden sm:block truncate">
+                                        {{contribuyente.nombreContribuyente}}
+                                    </div>
+
+                                    <!-- Apellido (más ancho y alineado a la izquierda) -->
+                                    <div class="flex-1 text-left hidden sm:block truncate">
+                                        {{contribuyente.apellidoContribuyente}}
+                                    </div>
+
+                                    <!-- Dirección (más ancho y alineado a la izquierda) -->
+                                    <div class="flex-1 text-left hidden sm:block truncate">
+                                        {{contribuyente.direccionContribuyente}}
+                                    </div>
+
+                                    
+                                    <!-- Details button -->
+                                    <div>
+                                        <button
+                                            class="min-w-10 min-h-7 h-7 px-2 leading-6"
+                                            mat-stroked-button
+                                            (click)="toggleDetails(contribuyente.rmc)">
+                                            <mat-icon
+                                                class="icon-size-5"
+                                                [svgIcon]="selectedContribuyente?.rmc === contribuyente.rmc ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="grid">
+                                    <ng-container *ngIf="selectedContribuyente?.rmc === contribuyente.rmc">
+                                        <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: contribuyente}"></ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator
+                        class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                        [ngClass]="{'pointer-events-none': isLoading}"
+                        [length]="pagination.length"
+                        [pageIndex]="pagination.page"
+                        [pageSize]="pagination.size"
+                        [pageSizeOptions]="[5, 10, 25, 100]"
+                        [showFirstLastButtons]="true">
+                    </mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <ng-template
+                #rowDetailsTemplate
+                let-contribuyente>
+                <div class="shadow-lg overflow-hidden">
+                    <div class="flex border-b">
+                        <!-- Selected dominio form -->
+                        <form
+                            class="flex flex-col w-full"
+                            [formGroup]="selectedContribuyenteFormv2">
+
+                            <div class="flex flex-col w-full p-8">
+
+                                <!-- CÓDIGO Y DESCRIPCIÓN -->
+                                <div class="flex flex-auto flex-wrap">
+                                    <div class="flex flex-col w-full lg:full sm:pl-8">
+                                        <div class="flex">
+                                            <mat-form-field class="w-1/4 pr-2" >
+                                                <mat-label>Rmc</mat-label>
+                                                <input 
+                                                    matInput
+                                                    [formControlName]="'rmc'" style="color: red;">
+                                            </mat-form-field>
+                                            
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>C.I.</mat-label>
+                                                <input placeholder="Ingresa C.I."
+                                                       matInput
+                                                       formControlName="ci"
+                                                       (blur)="markAsTouched(selectedContribuyenteFormv2.get('ci'))">
+                                                <mat-error *ngIf="selectedContribuyenteFormv2.get('ci').hasError('required') && selectedContribuyenteFormv2.get('ci').touched">
+                                                    Campo requerido!
+                                                </mat-error>
+                                            </mat-form-field>
+
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Nombre</mat-label>
+                                                <input placeholder="Ingresa Nombre"
+                                                    matInput
+                                                    [formControlName]="'nombreContribuyente'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('nombreContribuyente'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('nombreContribuyente').hasError('required') && selectedContribuyenteFormv2.get('nombreContribuyente').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Apellido</mat-label>
+                                                <input placeholder="Ingresa Apellido"
+                                                    matInput
+                                                    [formControlName]="'apellidoContribuyente'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('apellidoContribuyente'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('apellidoContribuyente').hasError('required') && selectedContribuyenteFormv2.get('apellidoContribuyente').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Razón Social</mat-label>
+                                                <input placeholder="Ingresa Razón Social"
+                                                    matInput
+                                                    [formControlName]="'razonSocialContribuyente'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('razonSocialContribuyente'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('razonSocialContribuyente').hasError('required') && selectedContribuyenteFormv2.get('razonSocialContribuyente').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Apellido Casado</mat-label>
+                                                <input placeholder="Ingresa Apellido casado"
+                                                    matInput
+                                                    [formControlName]="'apellidoCasadoContribuyente'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('apellidoCasadoContribuyente'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('apellidoCasadoContribuyente').hasError('required') && selectedContribuyenteFormv2.get('apellidoCasadoContribuyente').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>CI full</mat-label>
+                                                <input placeholder="Ingresa CI full"
+                                                    matInput
+                                                    [formControlName]="'ciFull'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('ciFull'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('ciFull').hasError('required') && selectedContribuyenteFormv2.get('ciFull').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-2/5">
+                                                <mat-label>Ciudad</mat-label>
+                                                <mat-select [formControlName]="'codCiudad'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('codCiudad'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('codCiudad').hasError('required') && selectedContribuyenteFormv2.get('codCiudad').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                                    <ng-container *ngFor="let dp of ciudades">
+                                                        <mat-option [value]="dp.id">
+                                                            {{dp.nombreCiudad}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/5">
+                                                    <mat-label>Barrio</mat-label>
+                                                    <mat-select [formControlName]="'codBarrio'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('codBarrio'))">
+                                                        <mat-error *ngIf="selectedContribuyenteFormv2.get('codBarrio').hasError('required') && selectedContribuyenteFormv2.get('codBarrio').touched">
+                                                            Campo requerido!
+                                                        </mat-error>
+                                                        <ng-container *ngFor="let ba of barriosV2">
+                                                            <mat-option [value]="ba.id">
+                                                                {{ba.nombreBarrio}}
+                                                            </mat-option>
+                                                        </ng-container>
+                                                    </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/5">
+                                                <mat-label>Nacionalidad</mat-label>
+                                                <mat-select [formControlName]="'codNacionalidad'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('codNacionalidad'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('codNacionalidad').hasError('required') && selectedContribuyenteFormv2.get('codNacionalidad').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                                    <ng-container *ngFor="let ba of nacionalidades">
+                                                        <mat-option [value]="ba.id">
+                                                            {{ba.nombreNacionalidad}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/5">
+                                                <mat-label>Estado Civil</mat-label>
+                                                <mat-select [formControlName]="'estadoCivilContribuyente'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('estadoCivilContribuyente'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('estadoCivilContribuyente').hasError('required') && selectedContribuyenteFormv2.get('estadoCivilContribuyente').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                                    <ng-container *ngFor="let ba of estadosCiviles">
+                                                        <mat-option [value]="ba.id">
+                                                            {{ba.descripcion}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/5">
+                                                <mat-label>Sexo</mat-label>
+                                                <mat-select [formControlName]="'sexoContribuyente'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('sexoContribuyente'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('sexoContribuyente').hasError('required') && selectedContribuyenteFormv2.get('sexoContribuyente').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                                    <ng-container *ngFor="let dp of sexos">
+                                                        <mat-option [value]="dp.id">
+                                                            {{dp.descripcion}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/5">
+                                                    <mat-label>tipoContribuyente</mat-label>
+                                                    <mat-select [formControlName]="'tipoContribuyente'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('tipoContribuyente'))">
+                                                        <mat-error *ngIf="selectedContribuyenteFormv2.get('tipoContribuyente').hasError('required') && selectedContribuyenteFormv2.get('tipoContribuyente').touched">
+                                                            Campo requerido!
+                                                        </mat-error>
+                                                        <ng-container *ngFor="let ba of tiposContribuyentes">
+                                                            <mat-option [value]="ba.id">
+                                                                {{ba.descripcion}}
+                                                            </mat-option>
+                                                        </ng-container>
+                                                    </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/5">
+                                                <mat-label>tipoDocumento</mat-label>
+                                                <mat-select [formControlName]="'tipoDocumento'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('tipoDocumento'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('tipoDocumento').hasError('required') && selectedContribuyenteFormv2.get('tipoDocumento').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                                    <ng-container *ngFor="let ba of tiposDocContribuyentes">
+                                                        <mat-option [value]="ba.id">
+                                                            {{ba.descripcion}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>    
+                                        </div>
+                                        <div class="flex">
+                                            
+                                        </div>
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Dirección</mat-label>
+                                                <input placeholder="Ingresa Dirección"
+                                                    matInput
+                                                    [formControlName]="'direccionContribuyente'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('direccionContribuyente'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('direccionContribuyente').hasError('required') && selectedContribuyenteFormv2.get('direccionContribuyente').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Lugar Nacimiento</mat-label>
+                                                <input placeholder="Ingresa Lugar Nacimiento"
+                                                    matInput
+                                                    [formControlName]="'lugarNacimiento'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('lugarNacimiento'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('lugarNacimiento').hasError('required') && selectedContribuyenteFormv2.get('lugarNacimiento').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Email</mat-label>
+                                                <input placeholder="Ingresa Email"
+                                                    matInput
+                                                    [formControlName]="'email'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('email'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('email').hasError('required') && selectedContribuyenteFormv2.get('email').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Grupo Sanguineo</mat-label>
+                                                <input placeholder="Ingresa Grupo Sanguineo"
+                                                    matInput
+                                                    [formControlName]="'grupoSanguineo'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('grupoSanguineo'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('grupoSanguineo').hasError('required') && selectedContribuyenteFormv2.get('grupoSanguineo').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-2/4 pr-2">
+                                                <mat-label>telefonoContribuyente</mat-label>
+                                                <input placeholder="Ingresa"
+                                                    matInput
+                                                    [formControlName]="'telefonoContribuyente'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('telefonoContribuyente'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('telefonoContribuyente').hasError('difunto') && selectedContribuyenteFormv2.get('telefonoContribuyente').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div> 
+                                        <div class="flex">
+                                            
+                                           
+                                        </div> 
+                                        <div class="flex">
+                                            
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Nº Casa</mat-label>
+                                                <input placeholder="Ingresa Nº Casa"
+                                                    matInput
+                                                    [formControlName]="'nroCasa'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('nroCasa'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('nroCasa').hasError('required') && selectedContribuyenteFormv2.get('nroCasa').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>nacContribuyente</mat-label>
+                                                <input placeholder="Ingresa"
+                                                    matInput
+                                                    [formControlName]="'nacContribuyente'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('nacContribuyente'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('nacContribuyente').hasError('difunto') && selectedContribuyenteFormv2.get('nacContribuyente').touched">
+                                                        Campo requerido! 
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>RUC</mat-label>
+                                                <input placeholder="Ingresa RUC"
+                                                    matInput
+                                                    [formControlName]="'ruc'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('ruc'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('ruc').hasError('required') && selectedContribuyenteFormv2.get('ruc').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Observación</mat-label>
+                                                <input placeholder="Ingresa Observación"
+                                                    matInput
+                                                    [formControlName]="'observacion'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('observacion'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('observacion').hasError('required') && selectedContribuyenteFormv2.get('observacion').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>   
+                                        <div class="flex">        
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Fecha Nacimiento</mat-label>
+                                                <input type="date" matInput
+                                                    [formControlName]="'fechaNacimiento'"
+                                                    (blur)="markAsTouched(selectedContribuyenteFormv2.get('fechaNacimiento'))">
+                                                <mat-error *ngIf="selectedContribuyenteFormv2.get('fechaNacimiento').hasError('required') && selectedContribuyenteFormv2.get('fechaNacimiento').touched">
+                                                    Campo requerido!
+                                                </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Fecha Inscripcion</mat-label>
+                                                <input type="date" matInput
+                                                    [formControlName]="'fechaInscripcionContribuyente'"
+                                                    (blur)="markAsTouched(selectedContribuyenteFormv2.get('fechaInscripcionContribuyente'))">
+                                                <mat-error *ngIf="selectedContribuyenteFormv2.get('fechaInscripcionContribuyente').hasError('required') && selectedContribuyenteFormv2.get('fechaInscripcionContribuyente').touched">
+                                                    Campo requerido!
+                                                </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-1/4 pr-2">
+                                                <mat-label>Fecha Clau</mat-label>
+                                                <input type="date" matInput
+                                                    [formControlName]="'fechaClauContribuyente'"
+                                                    (blur)="markAsTouched(selectedContribuyenteFormv2.get('fechaClauContribuyente'))">
+                                                <mat-error *ngIf="selectedContribuyenteFormv2.get('fechaClauContribuyente').hasError('required') && selectedContribuyenteFormv2.get('fechaClauContribuyente').touched">
+                                                    Campo requerido!
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        
+                                        <div class="flex">
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Documento</mat-label>
+                                                <input placeholder="Ingresa Documento"
+                                                    matInput
+                                                    [formControlName]="'documento'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('documento'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('documento').hasError('required') && selectedContribuyenteFormv2.get('documento').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Documento Extranjero</mat-label>
+                                                <input placeholder="Ingresa Doc Extranjero"
+                                                    matInput
+                                                    [formControlName]="'docExtranjero'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('docExtranjero'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('docExtranjero').hasError('required') && selectedContribuyenteFormv2.get('docExtranjero').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>migrado</mat-label>
+                                                <input placeholder="Ingresa"
+                                                    matInput
+                                                    [formControlName]="'migrado'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('migrado'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('migrado').hasError('required') && selectedContribuyenteFormv2.get('migrado').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>rmcOld</mat-label>
+                                                <input placeholder="Ingresa"
+                                                    matInput
+                                                    [formControlName]="'rmcOld'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('rmcOld'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('rmcOld').hasError('difunto') && selectedContribuyenteFormv2.get('rmcOld').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>Difunto</mat-label>
+                                                <input placeholder="Ingresa Difunto"
+                                                    matInput
+                                                    [formControlName]="'difunto'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('difunto'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('email').hasError('difunto') && selectedContribuyenteFormv2.get('difunto').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-3/4 pr-2">
+                                                <mat-label>fcDifunto</mat-label>
+                                                <input placeholder="Ingresa fcDifunto"
+                                                    matInput
+                                                    [formControlName]="'fcDifunto'" (blur)="markAsTouched(selectedContribuyenteFormv2.get('fcDifunto'))">
+                                                    <mat-error *ngIf="selectedContribuyenteFormv2.get('fcDifunto').hasError('required') && selectedContribuyenteFormv2.get('fcDifunto').touched">
+                                                        Campo requerido!
+                                                    </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between w-full border-t px-8 py-4">
+                                <div class="flex items-center">
+                                    <div
+                                        class="flex items-center mr-4"
+                                        *ngIf="flashMessage">
+
+                                        <ng-container *ngIf="flashMessage === 'success'">
+                                            <mat-icon
+                                                class="text-green-500"
+                                                [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                            <span class="ml-2">Contribuyente Actualizado</span>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="flashMessage === 'error'">
+                                            <mat-icon
+                                                class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">Se ha producido un error, inténtelo de nuevo.</span>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="flashMessage === 'validacion'">
+                                            <mat-icon
+                                                class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">Campos incompletos.</span>
+                                        </ng-container>
+                                    </div>
+
+                                    <button
+                                        mat-flat-button
+                                        type="button"
+                                        (click)="updateSelectedContribuyente()"
+                                        [color]="'primary'">
+                                        Actualizar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template #noContribuyentes>
+                <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">No hay Contribuyentes!</div>
+            </ng-template>
+
+        </div>
+
+    </div>
+
+</div>
+
