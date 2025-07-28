@@ -13,7 +13,7 @@ export class AuthUtils
     static AUTH_BACKEND_URL_V2 : string = 'http://localhost:8888/munisys-api/api/v2';
     static MUNISYS_BACKEND_URL_V2 : string = 'http://localhost:8888/munisys-api/api/v2';
     static AUTH_BACKEND_URL : string = 'http://localhost:8888/munisys-api/api/v1';
-   static MUNISYS_BACKEND_URL : string = 'http://localhost:8888/munisys-api/api/v1';
+   static MUNISYS_BACKEND_URL : string = 'http://localhost:8888/portal21';
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods

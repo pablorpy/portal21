@@ -29,6 +29,36 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 type : 'basic',
                 icon : 'heroicons_outline:clipboard-document-check',
                 link : '/apps/documentacion',
+            },
+             {
+                id   : 'parametros',
+                title: 'Parametros',
+                subtitle: 'Tablas de parámetros',
+                type : 'group',
+                icon : 'heroicons_outline:clipboard-document-check',
+                children: [
+                    {
+                        id   : 'parametros.barrios',
+                        title: 'ABM Barrios',
+                        type : 'basic',
+                        icon : 'heroicons_outline:clipboard-document-check',
+                        link : '/parametros/barrios',
+                    },
+                      {
+                        id   : 'parametros.ciudades',
+                        title: 'ABM Ciudades',
+                        type : 'basic',
+                        icon : 'heroicons_outline:clipboard-document-check',
+                        link : '/parametros/ciudades',
+                    },
+                      {
+                        id   : 'parametros.departamentos',
+                        title: 'ABM Departamentos',
+                        type : 'basic',
+                        icon : 'heroicons_outline:clipboard-document-check',
+                        link : '/parametros/departamentos',
+                    },
+                ]
             }
         ],
     },

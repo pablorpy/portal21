@@ -1,0 +1,28 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <mat-dialog-content>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" required />
+      <mat-error *ngIf="form.controls.nombre.invalid">El nombre es obligatorio</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+  <mat-label>Departamento</mat-label>
+  <mat-select formControlName="departamento" required>
+    <mat-option [value]="null">Seleccione un Departamento</mat-option>
+    <mat-option *ngFor="let dpto of departamentos$ | async" [value]="dpto">
+      {{ dpto.nombre }}
+    </mat-option>
+  </mat-select>
+  <mat-error *ngIf="form.controls.departamento.invalid">
+    El departamento es obligatorio
+  </mat-error>
+</mat-form-field>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Guardar</button>
+  </mat-dialog-actions>
+</form>

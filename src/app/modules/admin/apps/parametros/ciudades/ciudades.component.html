@@ -1,0 +1,71 @@
+<div class="p-4">
+    <!-- Título y botón para agregar -->
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Ciudades</h2>
+        <button mat-raised-button color="primary" (click)="agregarCiudad()">
+            <mat-icon>add</mat-icon>
+            Agregar Ciudad
+        </button>
+    </div>
+
+    <!-- Input de búsqueda -->
+    <mat-form-field appearance="outline" class="w-full mb-4">
+        <mat-label>Buscar</mat-label>
+        <input matInput [formControl]="searchInputControl" placeholder="Buscar por nombre...">
+        <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <!-- Tabla de ciudades -->
+    <div class="mat-elevation-z8 overflow-auto">
+        <table mat-table [dataSource]="dataSource" matSort class="w-full">
+
+
+            <!-- Nombre -->
+            <ng-container matColumnDef="nombre">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Ciudad </th>
+                <td mat-cell *matCellDef="let ciudad"> {{ ciudad.nombre }} </td>
+            </ng-container>
+
+            <!-- Ciudad -->
+            <ng-container matColumnDef="departamento">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Departamento </th>
+                <td mat-cell *matCellDef="let ciudad"> {{ ciudad.departamento?.nombre }} </td>
+            </ng-container>
+
+            <!-- Usuario de Alta -->
+            <ng-container matColumnDef="usuarioAlta">
+                <th mat-header-cell *matHeaderCellDef> Usuario Alta </th>
+                <td mat-cell *matCellDef="let ciudad"> {{ ciudad.usuarioAlta?.usuario }} </td>
+            </ng-container>
+
+            <!-- Fecha de Alta -->
+            <ng-container matColumnDef="fechaAlta">
+                <th mat-header-cell *matHeaderCellDef> Fecha Alta </th>
+                <td mat-cell *matCellDef="let ciudad"> {{ ciudad.fechaAlta }} </td>
+            </ng-container>
+
+            <!-- Acciones -->
+            <ng-container matColumnDef="acciones">
+                <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                <td mat-cell *matCellDef="let ciudad">
+                    <button mat-icon-button color="primary" (click)="editarCiudad(ciudad)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="eliminarCiudad(ciudad.id)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <!-- Cabecera y filas -->
+           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        </table>
+
+        <!-- Paginador -->
+         <mat-paginator
+        [pageSize]="pagination?.size || 10"           [length]="pagination?.length || 0"           [pageIndex]="pagination?.page || 0"         [pageSizeOptions]="[5, 10, 25, 100]"         [showFirstLastButtons]="true"               aria-label="Seleccionar página de ciudades">
+    </mat-paginator>
+    </div>
+</div>

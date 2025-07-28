@@ -22,6 +22,12 @@ import { SuperficieService } from '../catastros/modalSuperficie/buscar-superfici
 import { ConstruccionesListaComponent } from '../construcciones/list/construcciones-lista.component';
 import { ConstruccionesService } from '../construcciones/construcciones.service';
 import { BuscarSuperficieComponent } from '../catastros/modalSuperficie/list/buscar-superficie-component';
+import { BarriosComponent } from './barrios/barrios.component';
+import { BarriosService } from './barrios/barrios.service';
+import { CiudadesComponent } from './ciudades/ciudades.component';
+import { CiudadesService } from './ciudades/ciudades.service';
+import { DepartamentosComponent } from './departamentos/departamentos.component';
+import { DepartamentosService } from './departamentos/departamentos.service';
 
 export default [
     {
@@ -39,6 +45,45 @@ export default [
                 resolve  : {
                     dominios   : () => inject(DominiosService).getDominios(),
                     dominiosPadre   : () => inject(DominiosService).getDominiosPadres()
+                },
+            },
+        ],
+    },
+    {
+        path     : 'barrios',
+        component: BarriosComponent,
+        children : [
+            {
+                path     : '',
+                component: BarriosComponent,
+                resolve  : {
+                    barrios   : () => inject(BarriosService).getBarrios()
+                },
+            },
+        ],
+    },
+    {
+        path     : 'ciudades',
+        component: CiudadesComponent,
+        children : [
+            {
+                path     : '',
+                component: CiudadesComponent,
+                resolve  : {
+                    ciudades   : () => inject(CiudadesService).getCiudades()
+                },
+            },
+        ],
+    },
+    {
+        path     : 'departamentos',
+        component: DepartamentosComponent,
+        children : [
+            {
+                path     : '',
+                component: DepartamentosComponent,
+                resolve  : {
+                    departamentos   : () => inject(DepartamentosService).getDepartamentos()
                 },
             },
         ],
