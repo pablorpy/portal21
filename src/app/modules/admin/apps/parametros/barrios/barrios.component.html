@@ -30,17 +30,6 @@
                 <td mat-cell *matCellDef="let barrio"> {{ barrio.ciudad?.nombre }} </td>
             </ng-container>
 
-            <!-- Usuario de Alta -->
-            <ng-container matColumnDef="usuarioAlta">
-                <th mat-header-cell *matHeaderCellDef> Usuario Alta </th>
-                <td mat-cell *matCellDef="let barrio"> {{ barrio.usuarioAlta?.usuario }} </td>
-            </ng-container>
-
-            <!-- Fecha de Alta -->
-            <ng-container matColumnDef="fechaAlta">
-                <th mat-header-cell *matHeaderCellDef> Fecha Alta </th>
-                <td mat-cell *matCellDef="let barrio"> {{ barrio.fechaAlta }} </td>
-            </ng-container>
 
             <!-- Acciones -->
             <ng-container matColumnDef="acciones">
@@ -56,8 +45,8 @@
             </ng-container>
 
             <!-- Cabecera y filas -->
-            <tr mat-header-row *matHeaderRowDef="['nombre',  'ciudad', 'usuarioAlta', 'fechaAlta', 'acciones']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['nombre',  'ciudad', 'usuarioAlta', 'fechaAlta', 'acciones'];"></tr>
+            <tr mat-header-row *matHeaderRowDef="['nombre',  'ciudad', 'acciones']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['nombre',  'ciudad', 'acciones'];"></tr>
         </table>
 
         <!-- Paginador -->

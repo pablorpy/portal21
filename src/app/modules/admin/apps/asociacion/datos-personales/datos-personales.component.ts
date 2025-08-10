@@ -20,6 +20,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
+import { TipoDocumentoService } from '../../parametros/tipo-documento/tipo-documento.service';
+import { TipoDocumentoModel } from '../../parametros/tipo-documento/tipo-documentos.types';
 
 @Component({
   selector: 'app-datos-personales',
@@ -49,11 +51,13 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy
     
     horizontalStepperForm: UntypedFormGroup;
     verticalStepperForm: UntypedFormGroup;
+    tipoDocumento: TipoDocumentoModel[];
     /**
      * Constructor
      */
     constructor(
         private _projectService: ProjectService,
+        private _tipoDocumentoService: TipoDocumentoService,
         private _router: Router,
         private _formBuilder: UntypedFormBuilder
     )
@@ -73,14 +77,31 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy
         this.horizontalStepperForm = this._formBuilder.group({
             step1: this._formBuilder.group({
                 //email   : ['', [Validators.required, Validators.email]],
+                tipoDocumento : ['', Validators.required],
+                nroDocumento : ['', Validators.required],
+                esContribuyente : ['', Validators.required],
+                ruc : ['', Validators.required],
+                apellidos : ['', Validators.required],
+                nombres : ['', Validators.required],
+                fechaNac : ['', Validators.required],
+                sexo : ['', Validators.required],
+                estadoCivil : ['', Validators.required],
+                separacionBienes : ['', Validators.required],
+                nacionalidad : ['', Validators.required],
+                gradoEducacion : ['', Validators.required],
+                observaciones : ['', Validators.required],
+                
+          
                 country : ['', Validators.required],
                 //language: ['', Validators.required],
             }),
             step2: this._formBuilder.group({
-                //firstName: ['', Validators.required],
-                //lastName : ['', Validators.required],
-                //userName : ['', Validators.required],
-                //about    : [''],
+                categoriaDomicilio : ['', Validators.required],
+                tipoDomicilio : ['', Validators.required],
+                estadoDomicilio : ['', Validators.required],
+                ctaCteCtral : ['', Validators.required],
+                nisAnde : ['', Validators.required],
+                issan : ['', Validators.required],
             }),
             step3: this._formBuilder.group({
                 byEmail          : this._formBuilder.group({
@@ -103,6 +124,18 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy
                 this._prepareChartData();
             });
 
+            // Get the data
+        this._tipoDocumentoService.tipoDocumentos$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((tiposLiq) =>
+            {
+                // Store the data
+                this.tiposLiqRodados = tiposLiq;
+
+                // Prepare the chart data
+                this._prepareChartData();
+            });
+            
         // Attach SVG fill fixer to all ApexCharts
         window['Apex'] = {
             chart: {
