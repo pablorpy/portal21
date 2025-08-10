@@ -129,9 +129,11 @@ export class BarriosComponent  implements OnInit, AfterViewInit, OnDestroy{
                           }),
                       )
                       .subscribe();
-                                            this._barrioService.barrios$
+                            
+                      this._barrioService.barrios$
                             .pipe(takeUntil(this._unsubscribeAll))
                             .subscribe((barrios) => {
+                                console.log("BARRIOS_" + barrios);
                                 this.dataSource.data = barrios;
                                 this._changeDetectorRef.markForCheck();
                             });

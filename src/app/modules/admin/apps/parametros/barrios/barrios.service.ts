@@ -73,7 +73,7 @@ export class BarriosService {
             }, headers
         })
             .pipe(tap((response) => {
-               // console.log('response: ', response);
+                console.log('response: ', response);
                 this._pagination.next(response.pagination);
                 this._barrios.next(response.data);
             }),
