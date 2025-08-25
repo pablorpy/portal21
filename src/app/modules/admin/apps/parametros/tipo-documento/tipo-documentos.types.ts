@@ -5,7 +5,7 @@ export interface TipoDocumentoModel
     id: string;
     fechaAlta?: string;
     fechaModificacion?: string;
-    nombre?: string | null;
+    descripcion?: string | null;
     usuarioAlta?: User | UsuarioModel;
     usuarioModificacion?: User | UsuarioModel;
 }

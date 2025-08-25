@@ -54,7 +54,7 @@ export class TipoDocumentoModalComponent {
         this.form = this._fb.group({
             //id: [data?.id ?? '0'],
             id: [data?.id ?? null],
-            nombre: [data?.nombre ?? '', Validators.required],
+            nombre: [data?.descripcion ?? '', Validators.required],
         });
 
         // Obtener el usuario actual

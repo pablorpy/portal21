@@ -9,7 +9,7 @@ import { TipoDocumentoModel, GenericPagination } from './tipo-documentos.types';
 export class TipoDocumentoService {
     //x: string]: any;
     // Private
-    private _tipoDocumentos: BehaviorSubject<TipoDocumentoModel[] | null> = new BehaviorSubject(null);
+    private _tiposDocumentos: BehaviorSubject<TipoDocumentoModel[] | null> = new BehaviorSubject(null);
     private _tipoDocumento: BehaviorSubject<TipoDocumentoModel | null> = new BehaviorSubject(null);
     private _pagination: BehaviorSubject<GenericPagination | null> = new BehaviorSubject(null);
     private _authService = inject(AuthService);
@@ -24,8 +24,8 @@ export class TipoDocumentoService {
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
 
-    get tipoDocumentos$(): Observable<TipoDocumentoModel[]> {
-        return this._tipoDocumentos.asObservable();
+    get tiposDocumentos$(): Observable<TipoDocumentoModel[]> {
+        return this._tiposDocumentos.asObservable();
     }
 
     get tipoDocumento$(): Observable<TipoDocumentoModel> {
@@ -52,10 +52,10 @@ export class TipoDocumentoService {
      * @param order
      * @param search
      */
-    getTipoDocumentos(page: number = 0, size: number = 10, sort: string = 'nombre', order: 'asc' | 'desc' | '' = 'asc', search: string = ''):
+    getTiposDocumentos(page: number = 0, size: number = 10, sort: string = 'descripcion', order: 'asc' | 'desc' | '' = 'asc', search: string = ''):
         Observable<any> {
         const headers = { 'Authorization': 'Bearer ' + this._authService.accessToken }
-        return this._httpClient.get<any>(AuthUtils.MUNISYS_BACKEND_URL + "/tipoDocumentos/paginado", {
+        return this._httpClient.get<any>(AuthUtils.MUNISYS_BACKEND_URL + "/personas-tipos-documentos/paginado", {
             params: {
                 page: '' + page,
                 size: '' + size,
@@ -65,8 +65,8 @@ export class TipoDocumentoService {
             }, headers
         })
             .pipe(tap((response) => {
-                this._pagination.next(response.pagination);
-                this._tipoDocumentos.next(response.data);
+                //this._pagination.next(response);
+                this._tiposDocumentos.next(response);
             }),
             );
     }
@@ -78,7 +78,7 @@ export class TipoDocumentoService {
      * Get TipoDocumento by id
      */
     getTipoDocmentoById(id: string): Observable<TipoDocumentoModel> {
-        return this._httpClient.get<TipoDocumentoModel>(AuthUtils.MUNISYS_BACKEND_URL + "/tipoDocumentos/" + id)
+        return this._httpClient.get<TipoDocumentoModel>(AuthUtils.MUNISYS_BACKEND_URL + "/personas-tipos-documentos/" + id)
             .pipe(tap((tipoDocumento) => {
                 this._tipoDocumento.next(tipoDocumento);
             }),
@@ -93,17 +93,17 @@ export class TipoDocumentoService {
     crearTipoDocumento(): Observable<TipoDocumentoModel> {
         const newTipoDocumento: TipoDocumentoModel = {
             id: '0',
-            nombre: '',
+            descripcion: '',
             fechaAlta: '',
             fechaModificacion: '',
             usuarioAlta: null,
             usuarioModificacion: null,
         };
 
-        return this.tipoDocumentos$.pipe(
+        return this.tiposDocumentos$.pipe(
             take(1),
-            map(tipoDocumentos => {
-                this._tipoDocumentos.next([newTipoDocumento, ...tipoDocumentos]);
+            map(tiposDocumentos => {
+                this._tiposDocumentos.next([newTipoDocumento, ...tiposDocumentos]);
                 return newTipoDocumento;
             })
         );
@@ -116,14 +116,14 @@ export class TipoDocumentoService {
      * @param product
      */
             updateTipoDocumento(id: string, tipoDocumento: TipoDocumentoModel): Observable<TipoDocumentoModel> {
-                return this.tipoDocumentos$.pipe(
+                return this.tiposDocumentos$.pipe(
                     take(1),
                     switchMap(tipoDocumentos =>
-                        this._httpClient.put<TipoDocumentoModel>(AuthUtils.MUNISYS_BACKEND_URL + "/tipoDocumentos", tipoDocumento).pipe(
+                        this._httpClient.put<TipoDocumentoModel>(AuthUtils.MUNISYS_BACKEND_URL + "/personas-tipos-documentos", tipoDocumento).pipe(
                             map((updatedTipoDocumento) => {
                                 const index = tipoDocumentos.findIndex(item => item.id === id);
                                 tipoDocumentos[index] = updatedTipoDocumento;
-                                this._tipoDocumentos.next(tipoDocumentos);
+                                this._tiposDocumentos.next(tipoDocumentos);
                                 return updatedTipoDocumento;
                             })
                         )
@@ -141,13 +141,13 @@ export class TipoDocumentoService {
  deleteTipoDocumento(id: string): Observable<boolean> {
     const headers = { 'Authorization': 'Bearer ' + this._authService.accessToken };
     console.log("Deleting tipo documento with id: " + id);
-    return this.tipoDocumentos$.pipe(
+    return this.tiposDocumentos$.pipe(
         take(1),
-        switchMap(tipoDocumento => this._httpClient.delete(AuthUtils.MUNISYS_BACKEND_URL + "/tipoDocumentos/" + id).pipe(
+        switchMap(tipoDocumento => this._httpClient.delete(AuthUtils.MUNISYS_BACKEND_URL + "/personas-tipos-documentos/" + id).pipe(
             map(() => { // No necesitamos 'isDeleted' aquí si el backend no lo devuelve explícitamente y solo indica éxito por el 200 OK
                 // Filtrar el tipo documento eliminado del array actual y emitir el nuevo array
                 const updatedTipoDocumentos = tipoDocumento.filter(item => item.id !== id);
-                this._tipoDocumentos.next([...updatedTipoDocumentos]); // Emitir una nueva referencia del array
+                this._tiposDocumentos.next([...updatedTipoDocumentos]); // Emitir una nueva referencia del array
 
                 // Si tu backend devuelve un booleano, puedes mantener 'isDeleted'
                 // Para este ejemplo, asumimos que un 200 OK significa éxito
@@ -163,10 +163,10 @@ export class TipoDocumentoService {
 }
 
     createTipoDocumento(tipoDocumento: Partial<TipoDocumentoModel>): Observable<TipoDocumentoModel> {
-    return this._httpClient.post<TipoDocumentoModel>(AuthUtils.MUNISYS_BACKEND_URL + "/tipoDocumentos", tipoDocumento).pipe(
+    return this._httpClient.post<TipoDocumentoModel>(AuthUtils.MUNISYS_BACKEND_URL + "/personas-tipos-documentos", tipoDocumento).pipe(
         tap((nuevo) => {
-            this._tipoDocumentos.pipe(take(1)).subscribe(tipoDocumentos => {
-                this._tipoDocumentos.next([nuevo, ...tipoDocumentos]);
+            this._tiposDocumentos.pipe(take(1)).subscribe(tiposDocumentos => {
+                this._tiposDocumentos.next([nuevo, ...tiposDocumentos]);
             });
         })
     );
@@ -180,9 +180,9 @@ listarTipoDocuentos(): Observable<TipoDocumentoModel[]> {
     const headers = {
         'Authorization': 'Bearer ' + this._authService.accessToken
     };
-    return this._httpClient.get<TipoDocumentoModel[]>(AuthUtils.MUNISYS_BACKEND_URL + '/tipoDocumentos', { headers }).pipe(
+    return this._httpClient.get<TipoDocumentoModel[]>(AuthUtils.MUNISYS_BACKEND_URL + '/personas-tipos-documentos', { headers }).pipe(
         tap((tipoDocumentos) => {
-            this._tipoDocumentos.next(tipoDocumentos);
+            this._tiposDocumentos.next(tipoDocumentos);
         })
     );
 }

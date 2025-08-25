@@ -7,11 +7,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
-import { Subject, takeUntil } from 'rxjs';
-import { ProjectService } from './project.service';
+import { Subject, takeUntil } from 'rxjs';;
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
@@ -22,6 +22,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { TipoDocumentoService } from '../../parametros/tipo-documento/tipo-documento.service';
 import { TipoDocumentoModel } from '../../parametros/tipo-documento/tipo-documentos.types';
+import { PersonaContribuyenteModel } from '../../parametros/persona-contribuyente/personas-contribuyentes.types';
+import { PersonaContribuyenteService } from '../../parametros/persona-contribuyente/personas-contribuyentes.service';
+import { SexoService } from '../../parametros/sexo/sexos.service';
+import { SexoModel } from '../../parametros/sexo/sexos.types';
+import { EstadoCivilService } from '../../parametros/estado-civil/estados-civiles.service';
+import { EstadoCivilModel } from '../../parametros/estado-civil/estados-civiles.types';
+import { PersonaSeparacionBienService } from '../../parametros/persona-separacion-bien/personas-separaciones-bienes.service';
+import { PersonaSeparacionBienModel } from '../../parametros/persona-separacion-bien/personas-separaciones-bienes.types';
+import { DomicilioCategoriaService } from '../../parametros/domicilio-categoria/domicilios-categorias.service';
+import { DomicilioCategoriaModel } from '../../parametros/domicilio-categoria/domicilios-categorias.types';
 
 @Component({
   selector: 'app-datos-personales',
@@ -51,13 +61,22 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy
     
     horizontalStepperForm: UntypedFormGroup;
     verticalStepperForm: UntypedFormGroup;
-    tipoDocumento: TipoDocumentoModel[];
+    tiposDocumentos: TipoDocumentoModel[];
+    personasContribuyentes: PersonaContribuyenteModel[];
+    sexos: SexoModel[];
+    estadosCiviles: EstadoCivilModel[];
+    personasSeparacionesBienes: PersonaSeparacionBienModel[];
+    domiciliosCategorias: DomicilioCategoriaModel[];
     /**
      * Constructor
      */
     constructor(
-        private _projectService: ProjectService,
         private _tipoDocumentoService: TipoDocumentoService,
+        private _personaContribuyenteService: PersonaContribuyenteService,
+        private _sexoService: SexoService,
+        private _estadoCivilService: EstadoCivilService,
+        private _personaSeparacionBienService: PersonaSeparacionBienService,
+        private _domicilioCategoriaService: DomicilioCategoriaService,
         private _router: Router,
         private _formBuilder: UntypedFormBuilder
     )
@@ -90,9 +109,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy
                 nacionalidad : ['', Validators.required],
                 gradoEducacion : ['', Validators.required],
                 observaciones : ['', Validators.required],
-                
-          
-                country : ['', Validators.required],
+      
                 //language: ['', Validators.required],
             }),
             step2: this._formBuilder.group({
@@ -113,29 +130,60 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy
             }),
         });
         // Get the data
-        this._projectService.data$
+        // se recuperan tipos de documentos
+        this._tipoDocumentoService.tiposDocumentos$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((data) =>
+            .subscribe((tiposDoc) =>
             {
                 // Store the data
-                this.data = data;
-
-                // Prepare the chart data
-                this._prepareChartData();
+                this.tiposDocumentos = tiposDoc;
             });
 
-            // Get the data
-        this._tipoDocumentoService.tipoDocumentos$
+            // se recuperan personas contribuyentes
+            this._personaContribuyenteService.personasContribuyentes$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((tiposLiq) =>
+            .subscribe((lista) =>
             {
                 // Store the data
-                this.tiposLiqRodados = tiposLiq;
-
-                // Prepare the chart data
-                this._prepareChartData();
+                this.personasContribuyentes = lista;
             });
             
+            // se recuperan personas sexos
+            this._sexoService.sexos$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((lista) =>
+            {
+                // Store the data
+                this.sexos = lista;
+            });
+
+              // se recuperan estados civiles
+            this._estadoCivilService.estadosCiviles$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((lista) =>
+            {
+                // Store the data
+                this.estadosCiviles = lista;
+            });
+
+            // se recuperan personas separacion bienes
+            this._personaSeparacionBienService.personasSeparacionesBienes$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((lista) =>
+            {
+                // Store the data
+                this.personasSeparacionesBienes = lista;
+            });
+
+             // se recuperan personas domicilio categoria
+            this._domicilioCategoriaService.domiciliosCategorias$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((lista) =>
+            {
+                // Store the data
+                this.domiciliosCategorias = lista;
+            });
+
         // Attach SVG fill fixer to all ApexCharts
         window['Apex'] = {
             chart: {
