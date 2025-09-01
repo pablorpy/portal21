@@ -1,5 +1,4 @@
 <div class="flex flex-col flex-auto min-w-0">
-
     <!-- Header -->
     <div class="bg-card">
         <div class="flex flex-col w-full max-w-screen-xl mx-auto px-6 sm:px-8">
@@ -9,7 +8,8 @@
                     <div class="flex-0 w-16 h-16 rounded-full overflow-hidden">
                         <img
                             class="w-full h-full object-cover"
-                            src="assets/images/logo/coop21-logo-nuevo.png">
+                            src="assets/images/logo/coop21-logo-nuevo.png"
+                        >
                     </div>
                     <div class="flex flex-col min-w-0 ml-4">
                         <ng-container *transloco="let t">
@@ -56,7 +56,8 @@
                     <div class="flex items-center justify-center pl-2">
                         <mat-icon
                             class="icon-size-5"
-                            [svgIcon]="'heroicons_mini:chevron-down'"></mat-icon>
+                            [svgIcon]="'heroicons_mini:chevron-down'">
+                        </mat-icon>
                     </div>
                 </div>
                 <mat-menu
@@ -82,7 +83,6 @@
             </div>
         </div>
     </div>
-
     <!-- Main -->
     <div class="flex-auto border-t -mt-px pt-4 sm:pt-6">
         <div class="w-full max-w-screen-xl mx-auto">
@@ -91,7 +91,6 @@
                 class="sm:px-2"
                 mat-stretch-tabs="false"
                 [animationDuration]="'0'">
-
                 <!-- Team -->
                 <mat-tab>
                     <ng-template mat-tab-label>
@@ -101,16 +100,15 @@
                         </span>
                     </ng-template>
                     <ng-template matTabContent>
-                        
                             <!-- Datos personales -->
                             <div class="mt-0 mb-8 text-3xl font-bold">Datos personales</div>
-
                             <form
                                 class="p-4 bg-card shadow rounded overflow-hidden"
                                 [formGroup]="horizontalStepperForm">
                                 <mat-horizontal-stepper
                                     [linear]="true"
                                     #horizontalStepper>
+                                    <!-- step1 -->
                                     <mat-step
                                         [formGroupName]="'step1'"
                                         [stepControl]="horizontalStepperForm.get('step1')"
@@ -119,98 +117,104 @@
                                         <p class="my-6 font-medium">
                                             Completa tus datos personales
                                         </p>
-                                        
                                         <div class="flex">
-                                             <mat-form-field class="flex-auto">
+                                            <mat-form-field class="flex-auto">
                                                 <mat-select
                                                     [formControlName]="'tipoDocumento'"
                                                     [placeholder]="'Tipo de Documento'"
-                                                    required 
-                                                    >
-                                                    
+                                                    required>
                                                     <ng-container *ngFor="let x of tiposDocumentos">
                                                         <mat-option [value]="x.id">
                                                             {{x.descripcion}}
                                                         </mat-option>
                                                     </ng-container>
                                                 </mat-select>
-                                                
-                                                <mat-icon
-                                                class="icon-size-5"
-                                                matPrefix
-                                                [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
-                                            </mat-form-field>
-                                            &nbsp;
-                                            <mat-form-field class="flex-col flex-auto">
-                                                <input
-                                                    matInput
-                                                    [formControlName]="'nroDocumento'"
-                                                    [placeholder]="'Nro. de documento'"
-                                                    required>
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
-                                            </mat-form-field>
-                                            &nbsp;
-                                            <mat-form-field class="flex-auto">
-                                                <mat-select
-                                                    [formControlName]="'esContribuyente'"
-                                                    [placeholder]="'Es contribuyente'"
-                                                    required 
+                                                    [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                                </mat-form-field>
+                                                &nbsp;
+                                                <mat-form-field class="flex-col flex-auto">
+                                                    <input
+                                                        matInput
+                                                        [formControlName]="'nroDocumento'"
+                                                        [placeholder]="'Nro. de documento'"
+                                                        required
                                                     >
-                                                    
-                                                    <ng-container *ngFor="let x of personasContribuyentes">
-                                                        <mat-option [value]="x.id">
-                                                            {{x.descripcion}}
-                                                        </mat-option>
-                                                    </ng-container>
-                                                </mat-select>
-                                                <mat-icon
-                                                class="icon-size-5"
-                                                matPrefix
-                                                [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
-                                            </mat-form-field>
-                                            &nbsp;
-                                            <mat-form-field class="flex-auto">
-                                                <input
-                                                    matInput
-                                                    [formControlName]="'ruc'"
-                                                    [placeholder]="'RUC'"
-                                                    required>
-                                                <mat-icon
-                                                    class="icon-size-5"
-                                                    matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
-                                            </mat-form-field>
+                                                    <mat-icon
+                                                        class="icon-size-5"
+                                                        matPrefix
+                                                        [svgIcon]="'heroicons_solid:credit-card'">
+                                                    </mat-icon>
+                                                </mat-form-field>
+                                                &nbsp;
+                                                <mat-form-field class="flex-auto">
+                                                    <mat-select
+                                                        [formControlName]="'esContribuyente'"
+                                                        [placeholder]="'Es contribuyente'"
+                                                        required>
+                                                        <ng-container *ngFor="let x of personasContribuyentes">
+                                                            <mat-option [value]="x.id">
+                                                                {{x.descripcion}}
+                                                            </mat-option>
+                                                        </ng-container>
+                                                    </mat-select>
+                                                    <mat-icon
+                                                        class="icon-size-5"
+                                                        matPrefix
+                                                        [svgIcon]="'heroicons_solid:question-mark-circle'">
+                                                    </mat-icon>
+                                                </mat-form-field>
+                                                &nbsp;
+                                                <mat-form-field class="flex-auto">
+                                                    <input
+                                                        matInput
+                                                        [formControlName]="'ruc'"
+                                                        [placeholder]="'RUC'"
+                                                        required
+                                                    >
+                                                    <mat-icon
+                                                        class="icon-size-5"
+                                                        matPrefix
+                                                        [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                    </mat-icon>
+                                                </mat-form-field>
                                         </div>
+
                                         <div class="flex ">
                                             <mat-form-field class="flex-auto gt-xs:pr-3">
                                                 <input
                                                     matInput
                                                     [formControlName]="'apellidos'"
                                                     [placeholder]="'Apellidos'"
-                                                    required>
+                                                    required
+                                                >
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
+
                                             &nbsp;
+
                                             <mat-form-field class="flex-auto gt-xs:pr-3">
                                                 <input
                                                     matInput
                                                     [formControlName]="'nombres'"
                                                     [placeholder]="'Nombres'"
-                                                    required>
+                                                    required
+                                                >
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
                                         </div>
+
                                         <div class="flex">
-                                            
                                             <mat-form-field class="flex-auto">
                                                 <input
                                                     matInput
@@ -222,14 +226,14 @@
                                                     matPrefix
                                                     [svgIcon]="'heroicons_solid:calendar-days'"></mat-icon>
                                             </mat-form-field>
+
                                             &nbsp;
+
                                             <mat-form-field class="flex-auto gt-xs:pr-3">
                                                 <mat-select
                                                     [formControlName]="'sexo'"
                                                     [placeholder]="'Sexo'"
-                                                    required 
-                                                    >
-                                                    
+                                                    required>
                                                     <ng-container *ngFor="let x of sexos">
                                                         <mat-option [value]="x.id">
                                                             {{x.descripcion}}
@@ -239,89 +243,86 @@
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
-                                            </mat-form-field>
-                                            
+                                                    [svgIcon]="'heroicons_solid:question-mark-circle'">
+                                                </mat-icon>
+                                            </mat-form-field>  
                                         </div>
+
                                         <div class="flex">
                                             <mat-form-field class="flex-auto gt-xs:pr-3">
                                                 <mat-select
                                                     [formControlName]="'estadoCivil'"
                                                     [placeholder]="'Estado Civil'"
-                                                    required
-                                                    >
-                                                <!--<ng-container *ngFor="let x of estadosCiviles">
+                                                    required>
+                                                    <ng-container *ngFor="let x of estadosCiviles">
                                                         <mat-option [value]="x.id">
                                                             {{x.descripcion}}
                                                         </mat-option>
                                                     </ng-container>
-                                                -->
-                                                    <mat-option value="country-1">SO</mat-option>
-                                                    <mat-option value="country-2">CA</mat-option>
-                                                    <mat-option value="country-3">SE</mat-option>
-                                                    <mat-option value="country-3">DI</mat-option>
                                                 </mat-select>
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:question-mark-circle'">
+                                                </mat-icon>
                                             </mat-form-field>
+
                                             &nbsp;
+
                                             <mat-form-field class="flex-auto gt-xs:pr-3">
                                                 <mat-select
                                                     [formControlName]="'separacionBienes'"
                                                     [placeholder]="'Separacion de Bienes'"
-                                                    required
-                                                    >
-                                                 <!--   <ng-container *ngFor="let x of personasSeparacionesBienes">
+                                                    required>
+                                                    <ng-container *ngFor="let x of personasSeparacionesBienes">
                                                         <mat-option [value]="x.id">
                                                             {{x.descripcion}}
                                                         </mat-option>
-                                                        </ng-container>
-                                                -->
-                                                    <mat-option value="country-1">SI</mat-option>
-                                                    <mat-option value="country-2">NO</mat-option>
-                                                    <mat-option value="country-3">OK</mat-option>
+                                                    </ng-container>
                                                 </mat-select>
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:question-mark-circle'">
+                                                </mat-icon>
                                             </mat-form-field>
-                                            
                                         </div>
+
                                         <div class="flex">
                                             <mat-form-field class="flex-auto gt-xs:pr-3">
                                                 <mat-select
                                                     [formControlName]="'nacionalidad'"
                                                     [placeholder]="'Nacionalidad'"
                                                     required>
-                                                <!--   <ng-container *ngFor="let x of personasNacionalidades">
-                                                        <mat-option [value]="x.id">
-                                                            {{x.descripcion}}
-                                                        </mat-option>
-                                                        </ng-container>
-                                                -->
+                                                    <!--   <ng-container *ngFor="let x of personasNacionalidades">
+                                                                <mat-option [value]="x.id">
+                                                                    {{x.descripcion}}
+                                                                </mat-option>
+                                                            </ng-container>
+                                                    -->
                                                     <mat-option value="country-1">Paraguaya</mat-option>
                                                     <mat-option value="country-2">Argentina</mat-option>
                                                 </mat-select>
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:question-mark-circle'">
+                                                </mat-icon>
                                             </mat-form-field>
+
                                             &nbsp;
+
                                             <mat-form-field class="flex-auto gt-xs:pr-3">
                                                 <mat-select
                                                     [formControlName]="'gradoEducacion'"
                                                     [placeholder]="'Grado Educacion'"
                                                     required>
-                                                <!--   <ng-container *ngFor="let x of gradoEducaciones">
+                                                    <!--   <ng-container *ngFor="let x of gradoEducaciones">
                                                         <mat-option [value]="x.id">
                                                             {{x.descripcion}}
                                                         </mat-option>
                                                         </ng-container>
-                                                -->
+                                                    -->
                                                     <mat-option value="country-1">Universitario</mat-option>
                                                     <mat-option value="country-2">Secundario</mat-option>
                                                     <mat-option value="country-2">Primario</mat-option>
@@ -331,34 +332,35 @@
                                                     matPrefix
                                                     [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
                                             </mat-form-field>
-                                            
                                         </div>
+
                                         <div class="flex flex-row">
                                             <mat-form-field class="flex-auto gt-xs:pr-3">
                                                 <input
                                                     matInput
                                                     [formControlName]="'observaciones'"
                                                     [placeholder]="'Observaciones'"
-                                                    required>
+                                                    required
+                                                >
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
                                         </div>
+
                                         <div class="flex justify-end">
                                             <button
                                                 class="px-8"
                                                 mat-flat-button
                                                 [color]="'primary'"
-                                                
                                                 type="button"
-                                                matStepperNext>
-                                                Siguiente
+                                                matStepperNext>Siguiente
                                             </button>
                                         </div>
                                     </mat-step>
-
+                                     <!-- step2 -->
                                     <mat-step
                                         [formGroupName]="'step2'"
                                         [stepControl]="horizontalStepperForm.get('step2')"
@@ -374,24 +376,23 @@
                                                 <mat-select
                                                     [formControlName]="'categoriaDomicilio'"
                                                     [placeholder]="'Categoría de Domicilio'"
-                                                    required
-                                                    >
-                                                <!--
-                                                    <ng-container *ngFor="let x of domiciliosCategorias">
-                                                    <mat-option [value]="x.id">
-                                                    {{x.descripcion}}
-                                                    </mat-option>
-                                                    </ng-container>
-                                                -->
-                                                --<mat-option value="country-1">Principal</mat-option>
+                                                    required>
+                                                    <!--
+                                                        <ng-container *ngFor="let x of domiciliosCategorias">
+                                                            <mat-option [value]="x.id">
+                                                                {{x.descripcion}}
+                                                            </mat-option>
+                                                        </ng-container>
+                                                    -->
+                                                    <mat-option value="country-1">Principal</mat-option>
                                                     <mat-option value="country-2">Laboral</mat-option>
                                                     <mat-option value="country-3">Rural</mat-option>
-                                               
                                                 </mat-select>
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
 
                                             &nbsp;
@@ -413,13 +414,12 @@
                                                     <mat-option value="country-3">Familiar</mat-option>
                                                     <mat-option value="country-3">Otros</mat-option>
                                                 </mat-select>
-
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
-                                                </mat-form-field>
-                                            
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
+                                            </mat-form-field>
                                         </div>
 
                                         <div class="flex flex-row">
@@ -439,48 +439,58 @@
                                                     <mat-option value="country-2">Deshabitado</mat-option>
                                                 </mat-select>
                                                 <mat-icon
-                                                class="icon-size-5"
-                                                matPrefix
-                                                [svgIcon]="'heroicons_solid:question-mark-circle'"></mat-icon>
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:question-mark-circle'">
+                                                </mat-icon>
                                             </mat-form-field>
+
                                             &nbsp;
-                                        
+
                                             <mat-form-field class="flex-col flex-auto">
                                                 <input
                                                     matInput
                                                     [formControlName]="'ctaCteCtral'"
                                                     [placeholder]="'Cta Cte Ctral.'"
-                                                    required>
+                                                    required
+                                                >
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:credit-card'">
+                                                </mat-icon>
                                             </mat-form-field>
                                         </div>
+
                                         <div class="flex flex-row">
                                             <mat-form-field class="flex-auto">
                                                 <input
                                                     matInput
                                                     [formControlName]="'nisAnde'"
                                                     [placeholder]="'NIS ANDE'"
-                                                    required>
+                                                    required
+                                                >
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
 
                                             &nbsp;
+
                                             <mat-form-field class="flex-auto">
                                                 <input
                                                     matInput
                                                     [formControlName]="'issan'"
                                                     [placeholder]="'ISSAN'"
-                                                    required>
+                                                    required
+                                                >
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
                                         </div>
 
@@ -488,52 +498,56 @@
                                              <mat-form-field class="flex-auto">
                                                 <input
                                                     matInput
-                                                    [formControlName]="'ahoRes'"
-                                                    [placeholder]="'AÑOS DE RESIDENCIA'"
-                                                    required>
+                                                    [formControlName]="'ahoResidencia'"
+                                                    [placeholder]="'Años de residencia'"
+                                                    required
+                                                >
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
 
-                                             &nbsp;
-                                              <mat-form-field class="flex-auto">
+                                            &nbsp;
+                                                
+                                            <mat-form-field class="flex-auto">
                                                 <input
                                                     matInput
-                                                    [formControlName]="'coorGeo'"
-                                                    [placeholder]="'COORDENADAS GEOGRAFICAS'"
-                                                    required>
+                                                    [formControlName]="'coordenadaGeografica'"
+                                                    [placeholder]="'Coordenadas Geaográficas'"
+                                                    required
+                                                >
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
                                         </div>
 
-                                         <div class="flex">
+                                        <div class="flex">
                                             <mat-form-field class="flex-auto">
                                                 <mat-select
                                                     [formControlName]="'domicilioBarrio'"
-                                                    [placeholder]="'BARRIO'"
-                                                    required
-                                                    >
+                                                    [placeholder]="'Barrio'"
+                                                    required>
                                                 <!--
                                                     <ng-container *ngFor="let x of domiciliosCategorias">
-                                                    <mat-option [value]="x.id">
-                                                    {{x.descripcion}}
-                                                    </mat-option>
+                                                        <mat-option [value]="x.id">
+                                                            {{x.descripcion}}
+                                                        </mat-option>
                                                     </ng-container>
                                                 -->
-                                                <mat-option value="country-1">San Roque II</mat-option>
-                                                <mat-option value="country-2">San Vicente</mat-option>
-                                                <mat-option value="country-3">La Merced</mat-option>
-                                               
+                                                    <mat-option value="country-1">San Roque II</mat-option>
+                                                    <mat-option value="country-2">San Vicente</mat-option>
+                                                    <mat-option value="country-3">La Merced</mat-option>
                                                 </mat-select>
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
 
                                             &nbsp;
@@ -541,34 +555,33 @@
                                             <mat-form-field class="flex-auto">
                                                 <mat-select
                                                     [formControlName]="'domicilioZona'"
-                                                    [placeholder]="'ZONA'"
+                                                    [placeholder]="'Zona'"
                                                     required>
-                                                    <!--
-                                                       <ng-container *ngFor="let x of personasSeparacionesBienes">
-                                                       <mat-option [value]="x.id">
-                                                       {{x.descripcion}}
-                                                       </mat-option>
-                                                       </ng-container>
-                                                    -->
+                                                <!--
+                                                    <ng-container *ngFor="let x of personasSeparacionesBienes">
+                                                    <mat-option [value]="x.id">
+                                                    {{x.descripcion}}
+                                                    </mat-option>
+                                                    </ng-container>
+                                                -->
                                                     <mat-option value="country-1">Urbana</mat-option>
                                                     <mat-option value="country-2">Rural</mat-option>
                                                     <mat-option value="country-3">Otros</mat-option>
                                                 </mat-select>
-
                                                 <mat-icon
-                                                    class="icon-size-5"
+                                                   class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
-                                                </mat-form-field>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
+                                            </mat-form-field>
                                         </div>
 
-                                         <div class="flex">
+                                        <div class="flex">
                                             <mat-form-field class="flex-auto">
                                                 <mat-select
                                                     [formControlName]="'domicilioDepartamento'"
-                                                    [placeholder]="'DEPARTAMENTO'"
-                                                    required
-                                                    >
+                                                    [placeholder]="'Departamento'"
+                                                    required>
                                                 <!--
                                                     <ng-container *ngFor="let x of domiciliosCategorias">
                                                     <mat-option [value]="x.id">
@@ -576,16 +589,15 @@
                                                     </mat-option>
                                                     </ng-container>
                                                 -->
-                                        
-                                                <mat-option value="country-1">Misiones</mat-option>
-                                                <mat-option value="country-2">Paraguari</mat-option>
-                                                <mat-option value="country-3">Central</mat-option>
-                                               
+                                                    <mat-option value="country-1">Misiones</mat-option>
+                                                    <mat-option value="country-2">Paraguari</mat-option>
+                                                    <mat-option value="country-3">Central</mat-option>
                                                 </mat-select>
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
 
                                             &nbsp;
@@ -593,7 +605,7 @@
                                             <mat-form-field class="flex-auto">
                                                 <mat-select
                                                     [formControlName]="'domicilioCiudad'"
-                                                    [placeholder]="'CIUDAD'"
+                                                    [placeholder]="'Ciudad'"
                                                     required>
                                                     <!--
                                                        <ng-container *ngFor="let x of personasSeparacionesBienes">
@@ -607,44 +619,45 @@
                                                     <mat-option value="country-3">San Antonio</mat-option>
                                                     <mat-option value="country-3">Villa Elisa</mat-option>
                                                 </mat-select>
-
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
-                                                </mat-form-field>
-                                            
-                                        </div>
-
-                                        <div class="flex flex-row">
-                                             <mat-form-field class="flex-auto">
-                                                <input
-                                                    matInput
-                                                    [formControlName]="'domDir'"
-                                                    [placeholder]="'DIRECCION'"
-                                                    required>
-                                                <mat-icon
-                                                    class="icon-size-5"
-                                                    matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
                                         </div>
 
                                         <div class="flex flex-row">
-                                              <mat-form-field class="flex-auto">
+                                            <mat-form-field class="flex-auto">
                                                 <input
                                                     matInput
-                                                    [formControlName]="'domObs'"
-                                                    [placeholder]="'OBSERVACIONES'"
-                                                    required>
+                                                    [formControlName]="'domicilioDireccion'"
+                                                    [placeholder]="'Dirección'"
+                                                    required
+                                                >
                                                 <mat-icon
                                                     class="icon-size-5"
                                                     matPrefix
-                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
                                             </mat-form-field>
-
                                         </div>
-                                        
+
+                                        <div class="flex flex-row">
+                                            <mat-form-field class="flex-auto">
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'domicilioObservacion'"
+                                                    [placeholder]="'Observaciones'"
+                                                    required
+                                                >
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
+                                            </mat-form-field>
+                                        </div>
                                         <div class="flex justify-end">
                                             <button
                                                 class="px-8 mr-2"
@@ -660,13 +673,12 @@
                                                 [color]="'primary'"
                                                 [disabled]="horizontalStepperStep2.stepControl.invalid"
                                                 type="button"
-                                                matStepperNext>
-                                                Siguiente
+                                                matStepperNext>Siguiente
                                             </button>
                                         </div>
                                     </mat-step>
-
-                                     <mat-step
+                                     <!-- step3 -->
+                                    <mat-step
                                         [formGroupName]="'step3'"
                                         [stepControl]="horizontalStepperForm.get('step3')"
                                         #horizontalStepperStep3>
@@ -675,7 +687,65 @@
                                         <p class="my-6 font-medium">
                                             Completa tus datos de profeciones
                                         </p>
-                                    </mat-step>
+
+                                        <div class="flex">
+                                            <div class="flex flex-row">
+                                                <mat-form-field class="flex-auto">
+                                                    <mat-select
+                                                        [formControlName]="'profesionCategoria'"
+                                                        [placeholder]="'Categoría Profesión'"
+                                                        required>
+                                                    <!--
+                                                        <ng-container *ngFor="let x of profesionesCategoria">
+                                                        <mat-option [value]="x.id">
+                                                        {{x.descripcion}}
+                                                        </mat-option>
+                                                        </ng-container>
+                                                    -->
+                                                        <mat-option value="country-1">Proncipal</mat-option>
+                                                        <mat-option value="country-2">Secundario</mat-option>
+                                                     </mat-select>
+                                                    <mat-icon
+                                                        class="icon-size-5"
+                                                        matPrefix
+                                                        [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                    </mat-icon>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+
+                                        &nbsp;
+
+                                        <div class="flex flex-row">
+                                            <mat-form-field class="flex-auto">
+                                                <input
+                                                    matInput
+                                                    [formControlName]="'empresaLugarTrabajo'"
+                                                    [placeholder]="'Empresa - Lugar de Trabajo'"
+                                                    required
+                                                >
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    matPrefix
+                                                    [svgIcon]="'heroicons_solid:clipboard-document-list'">
+                                                </mat-icon>
+                                            </mat-form-field>
+                                        </div>
+
+ </mat-step>
+                                    
+
+
+
+
+
+
+
+
+
+
+
+
 
                                     <mat-step
                                         [formGroupName]="'step4'"

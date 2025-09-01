@@ -25,9 +25,9 @@ export default [
                     tiposDocumentos: () => inject(TipoDocumentoService).getTiposDocumentos(),
                     personasContribuyentes: () => inject(PersonaContribuyenteService).getPersonasContribuyentes(),
                     sexos: () => inject(SexoService).getSexos(),
-                   // estadosCiviles: () => inject(EstadoCivilService).getestadosCiviles(),
-                   // personasSeparacionesBienes: () => inject(PersonaSeparacionBienService).getPersonasSeparacionesBienes(),
-                   // domiciliosCategorias: () => inject(DomicilioCategoriaService).getDomiciliosCategorias()
+                    estadosCiviles: () => inject(EstadoCivilService).getestadosCiviles(),
+                    personasSeparacionesBienes: () => inject(PersonaSeparacionBienService).getPersonasSeparacionesBienes(),
+                    //domiciliosCategorias: () => inject(DomicilioCategoriaService).getDomiciliosCategorias(),
                 },
             }
         ],

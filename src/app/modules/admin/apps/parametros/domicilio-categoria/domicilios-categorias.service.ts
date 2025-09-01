@@ -72,9 +72,6 @@ export class DomicilioCategoriaService {
             );
     }
 
-
-
-
     /**
      * Get domicilioCategoria by id
      */
@@ -85,8 +82,6 @@ export class DomicilioCategoriaService {
             }),
             );
     }
-
-   
 
     /**
      * Crear producto
