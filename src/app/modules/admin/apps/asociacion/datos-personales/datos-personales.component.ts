@@ -119,6 +119,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy
                 ctaCteCtral : ['', Validators.required],
                 nisAnde : ['', Validators.required],
                 issan : ['', Validators.required],
+                anhoResidenciaDomicilio: ['', Validators.required]
             }),
             step3: this._formBuilder.group({
                 byEmail          : this._formBuilder.group({
