@@ -6,6 +6,8 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { PersonaContribuyenteModel } from './profesiones-estados.types';
 import { GenericPagination } from '../tipo-documento/tipo-documentos.types';
 
+
+
 @Injectable({ providedIn: 'root' })
 export class PersonaContribuyenteService {
     //x: string]: any;

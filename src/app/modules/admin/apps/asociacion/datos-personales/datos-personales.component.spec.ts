@@ -12,6 +12,8 @@ describe('DatosPersonalesComponent', () => {
     })
     .compileComponents();
     
+
+    
     fixture = TestBed.createComponent(DatosPersonalesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

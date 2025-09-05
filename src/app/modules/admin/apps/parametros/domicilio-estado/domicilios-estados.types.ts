@@ -10,6 +10,8 @@ export interface DomicilioEstadoModel
     usuarioModificacion?: User | UsuarioModel;
 }
 
+
+
 export interface GenericPagination
 {
     length: number;

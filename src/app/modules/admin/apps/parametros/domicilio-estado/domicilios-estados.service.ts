@@ -173,6 +173,8 @@ export class DomicilioEstadoService {
 }
 
 
+
+
 /**
  * Lista todos los personaContribuyentes sin paginación (para usar en selects)
  */

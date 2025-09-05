@@ -8,6 +8,8 @@ import { EstadoCivilService } from '../parametros/estado-civil/estados-civiles.s
 import { PersonaSeparacionBienService } from '../parametros/persona-separacion-bien/personas-separaciones-bienes.service';
 import { DomicilioCategoriaService } from '../parametros/domicilio-categoria/domicilios-categorias.service';
 
+
+
 export default [
     {
         path      : '',

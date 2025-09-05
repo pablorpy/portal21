@@ -175,6 +175,8 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy
                 this.personasSeparacionesBienes = lista;
             });
 
+
+
              // se recuperan personas domicilio categoria
             this._domicilioCategoriaService.domiciliosCategorias$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -182,6 +184,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy
             {
                 // Store the data
                 this.domiciliosCategorias = lista;
+                
             });
 
         // Attach SVG fill fixer to all ApexCharts
